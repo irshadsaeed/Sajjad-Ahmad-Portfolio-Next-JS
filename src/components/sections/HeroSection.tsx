@@ -29,7 +29,7 @@ const IDENTITY = {
   status:      'Available',
   location:    'Islamabad · PKT',
   whatsappUrl: 'https://wa.me/923435252754',
-  imageSrc:    '/images/profilee.png',
+  imageSrc:    '/images/image.png',
 }
 
 const STATS = [
@@ -408,7 +408,7 @@ function MagCTA({
 }: {
   href?: string; children: React.ReactNode; primary?: boolean
 }) {
-  const ref    = useRef<HTMLElement>(null)
+  const ref    = useRef<HTMLAnchorElement | HTMLButtonElement>(null)
   const mx     = useMotionValue(0)
   const my     = useMotionValue(0)
   const smx    = useSpring(mx, { stiffness: 200, damping: 20 })
@@ -482,13 +482,13 @@ function MagCTA({
 
   if (href) {
     return (
-      <motion.a href={href} target="_blank" rel="noopener noreferrer" {...props} style={{ ...style, ...props.style } as any}>
+      <motion.a href={href} target="_blank" rel="noopener noreferrer" {...props} style={{ ...style, ...props.style } as any} ref={ref as any}>
         {inner}
       </motion.a>
     )
   }
   return (
-    <motion.button {...props} style={{ ...style, ...props.style } as any}>
+    <motion.button {...props} style={{ ...style, ...props.style } as any} ref={ref as any}>
       {inner}
     </motion.button>
   )
