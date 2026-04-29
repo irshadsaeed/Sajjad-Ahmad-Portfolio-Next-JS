@@ -6,6 +6,7 @@ import {
   Geist_Mono,
 } from 'next/font/google'
 import '@/app/globals.css'
+import { CursorProvider } from '@/components/ui/CursorProvider'
 
 /* ─────────────────────────────────────────────────────────────
    FONT SYSTEM — Ultra-Refined Luxury Stack
@@ -196,6 +197,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <a href="#main-content" className="skip-link">Skip to main content</a>
+        <CursorProvider />
         {children}
       </body>
     </html>
