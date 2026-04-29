@@ -17,7 +17,7 @@ const IDENTITY = {
   firstName:   'Sajjad',
   lastName:    'Ahmad',
   discipline:  'WordPress & Laravel',
-  tagline:     'Website Developer · API Specialist',
+  tagline:     'Crafting digital solutions with precision and passion.',
   status:      'Available',
   location:    'Islamabad · PKT',
   whatsappUrl: 'https://wa.me/923435252754',
@@ -172,7 +172,7 @@ function SignaturePortrait() {
       style={{
         rotateX: rotX, rotateY: rotY, y: floatY,
         transformStyle: 'preserve-3d', perspective: 900,
-        position: 'relative', width: '100%', maxWidth: 400, margin: '0 auto',
+        position: 'relative', width: '100%', maxWidth: 440, margin: '0 auto',
       }}
     >
       {/* Ambient glow */}
@@ -210,7 +210,7 @@ function SignaturePortrait() {
         border: `1px solid ${hov ? 'var(--gold-bdr)' : 'var(--canvas-4)'}`,
         boxShadow: hov ? 'var(--sh-gd)' : 'var(--sh)',
         transition: 'border-color 0.4s, box-shadow 0.4s',
-        aspectRatio: '3 / 4',
+        aspectRatio: '4 / 5',
       }}>
         <motion.div style={{ x: imgX, y: imgY, position: 'absolute', inset: '-12px' }}>
           <Image
@@ -248,7 +248,7 @@ function SignaturePortrait() {
         }}>
           {/* Status pill */}
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
+            display: 'inline-flex', alignItems: 'start', gap: 5,
             background: 'rgba(0,255,148,0.1)', border: '1px solid rgba(0,255,148,0.22)',
             borderRadius: 100, padding: '3px 10px', marginBottom: '0.6rem',
           }}>
@@ -442,7 +442,7 @@ function MagCTA({
   const onML = useCallback(() => { mx.set(0); my.set(0); setHov(false) }, [mx, my])
 
   const style: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 8,
+    display: 'inline-flex', alignItems: 'start', gap: 8,
     padding: primary ? '0.88rem 2rem' : '0.85rem 1.65rem',
     background: primary ? (hov ? 'var(--gold-rich)' : 'var(--gold)') : (hov ? 'var(--canvas-3)' : 'transparent'),
     color:     primary ? '#0A0907' : (hov ? 'var(--t1)' : 'var(--t2)'),
@@ -475,7 +475,7 @@ function MagCTA({
           />
         )}
       </AnimatePresence>
-      <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'start', gap: 8 }}>
         {children}
       </span>
     </>
@@ -522,7 +522,7 @@ export default function HeroSection() {
       aria-label={`Hero — ${IDENTITY.name}`}
       style={{
         position: 'relative', minHeight: '100vh',
-        display: 'flex', alignItems: 'center',
+        display: 'flex', alignItems: 'start',
         overflow: 'hidden', background: 'var(--canvas)',
       }}
     >
@@ -568,7 +568,7 @@ export default function HeroSection() {
       <div style={{
         position: 'relative', zIndex: 1,
         width: '100%', maxWidth: 1240, margin: '0 auto',
-        padding: 'clamp(96px, 11vw, 140px) clamp(20px, 5vw, 60px) clamp(60px, 8vw, 100px)',
+        padding: 'clamp(72px, 8vw, 96px) clamp(20px, 5vw, 60px) clamp(48px, 6vw, 80px)',
       }}>
         <div
           className="hero-grid"
@@ -576,7 +576,7 @@ export default function HeroSection() {
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 0.88fr) minmax(0, 1.12fr)',
             gap: 'clamp(3rem, 6vw, 6rem)',
-            alignItems: 'center',
+            alignItems: 'start',
           }}
         >
 
@@ -600,7 +600,7 @@ export default function HeroSection() {
                 borderRadius: 10, padding: '0.3rem 0.7rem',
                 fontFamily: 'var(--font-family-accent)', fontSize: '0.57rem',
                 color: 'var(--t2)', boxShadow: 'var(--sh)', backdropFilter: 'blur(12px)',
-                display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+                display: 'flex', alignItems: 'start', gap: 5, whiteSpace: 'nowrap',
               }}
             >
               <span style={{ color: 'var(--gold)', display: 'flex' }}>
@@ -624,7 +624,7 @@ export default function HeroSection() {
                 borderRadius: 10, padding: '0.3rem 0.7rem',
                 fontFamily: 'var(--font-family-accent)', fontSize: '0.57rem',
                 color: 'var(--t2)', boxShadow: 'var(--sh)', backdropFilter: 'blur(12px)',
-                display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+                display: 'flex', alignItems: 'start', gap: 5, whiteSpace: 'nowrap',
               }}
             >
               <span style={{ fontFamily: 'var(--font-family-display)', fontStyle: 'italic', color: 'var(--gold)', fontSize: '0.64rem' }}>🎓</span>
@@ -642,10 +642,10 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, ease: E }}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}
+              style={{ display: 'flex', alignItems: 'start', gap: '0.6rem', flexWrap: 'wrap' }}
             >
               <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
+                display: 'inline-flex', alignItems: 'start', gap: 6,
                 background: 'var(--ac-dim)', border: '1px solid var(--ac-bdr)',
                 borderRadius: 100, padding: '4px 12px',
               }}>
@@ -684,7 +684,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.52, ease: E }}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}
+              style={{ display: 'flex', alignItems: 'start', gap: '0.7rem' }}
             >
               <div style={{
                 width: '2px', height: '2rem', flexShrink: 0,
@@ -788,7 +788,7 @@ export default function HeroSection() {
         style={{
           position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
           background: 'none', border: 'none', color: 'var(--t3)', cursor: 'pointer',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+          display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 5,
           animation: 'float-btn 3.5s ease-in-out infinite',
         }}
       >
@@ -831,7 +831,7 @@ export default function HeroSection() {
           }
           .hero-grid > *:first-child {
             order: -1;
-            max-width: 360px;
+            max-width: 400px;
             width: 100%;
             margin: 0 auto;
           }
