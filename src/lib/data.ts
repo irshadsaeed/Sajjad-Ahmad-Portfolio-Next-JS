@@ -234,6 +234,16 @@ export const education: EducationItem[] = [
     school: 'FutureLearn · University of Leeds',
     period: 'December 2019',
     description: 'Applied critical thinking models, formative assessment, and action planning to sharpen analytical reasoning capabilities.',
+    link: 'https://www.futurelearn.com/certificates/0g88779',
+  },
+  {
+    id: 'ja-pakistan',
+    badge: 'Program',
+    badgeType: 'cert',
+    degree: 'Tameer Entrepreneurship Program',
+    school: 'JA Pakistan (INJAZ Pakistan)',
+    period: 'Jan 2021 – Apr 2021',
+    description: 'Completed the Tameer Entrepreneurship Program covering entrepreneurship skills, financial literacy, and workplace integrity. Developed key competencies in communication, problem solving, leadership, and business development.',
   },
 ]
 

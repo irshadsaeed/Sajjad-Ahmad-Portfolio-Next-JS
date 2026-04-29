@@ -662,6 +662,42 @@ const KnowledgeModule = memo(function KnowledgeModule({
             {item.description}
           </p>
 
+          {/* Certificate link — if available */}
+          {(item as any).link && (
+            <a
+              href={(item as any).link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display:        'inline-flex',
+                alignItems:     'center',
+                gap:            5,
+                fontFamily:     'var(--font-family-accent)',
+                fontSize:       '0.56rem',
+                color:          cfg.color,
+                letterSpacing:  '0.08em',
+                textTransform:  'uppercase',
+                fontWeight:     500,
+                textDecoration: 'none',
+                marginTop:      '0.65rem',
+                padding:        '0.25rem 0.7rem',
+                borderRadius:   'var(--r-xs)',
+                background:     cfg.color === 'var(--gold)' ? 'var(--gold-dim)' : 'var(--ac-dim)',
+                border:         `1px solid ${cfg.color === 'var(--gold)' ? 'var(--gold-bdr)' : 'var(--ac-bdr)'}`,
+                transition:     'all 0.2s',
+                position:       'relative',
+                zIndex:         1,
+              }}
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15,3 21,3 21,9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              View Certificate
+            </a>
+          )}
+
           {/* Bottom bar */}
           <motion.div
             animate={{ scaleX: hovered ? 1 : 0 }}
@@ -823,7 +859,6 @@ export default function EducationSection() {
           .edu-modules-grid {
             grid-template-columns: 1fr !important;
             padding-bottom: 0 !important;
-            
           }
           .edu-featured-inner {
             grid-template-columns: 1fr !important;

@@ -170,6 +170,7 @@ const ChannelCard = memo(function ChannelCard({
         <div style={{
           display:       'flex', flexDirection: 'column',
           alignItems:    'flex-end', gap: '0.2rem', flexShrink: 0,
+          minWidth:      0,
         }}>
           {/* Note pill */}
           <span style={{
@@ -500,7 +501,7 @@ export default function ContactSection() {
       id="contact"
       ref={sectionRef}
       className="section-pad"
-      style={{ background: 'var(--canvas-2)', position: 'relative', overflow: 'hidden' }}
+      style={{ background: 'var(--canvas-2)', position: 'relative', overflow: 'hidden', maxWidth: '100vw' }}
     >
       {/* Ambient */}
       <div aria-hidden="true" style={{
@@ -644,7 +645,12 @@ export default function ContactSection() {
         @media (max-width: 860px) {
           .contact-grid {
             grid-template-columns: 1fr !important;
-            gap: 3rem !important;
+            gap: 2.5rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .contact-grid {
+            gap: 2rem !important;
           }
         }
       `}</style>

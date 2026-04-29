@@ -305,12 +305,7 @@ const ExperiencePanel = memo(function ExperiencePanel({
                 </div>
               )}
 
-              {/* Decorative line */}
-              <div style={{
-                width: '2px', height: 44, marginTop: 'auto',
-                background: `linear-gradient(to bottom, ${color}, transparent)`,
-                opacity: 0.28, borderRadius: 1,
-              }} />
+
             </div>
 
             {/* ── RIGHT — CAPSULES ── */}
@@ -634,7 +629,7 @@ export default function ExperienceSection() {
         @media (max-width: 768px) {
           .exp-panel-grid {
             grid-template-columns: 1fr !important;
-            gap: 2rem !important;
+            gap: 1.75rem !important;
           }
           .exp-swipe-hint { display: flex !important; }
         }
