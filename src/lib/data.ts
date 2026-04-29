@@ -15,10 +15,10 @@ export const identity = {
   firstName:  'Sajjad',
   lastName:   'Ahmad',
   title:      'WordPress & Laravel Developer',
-  tagline:    "Crafting the Web's Future — one line at a time.",
-  experience: '3+',
-  location:   'PWD Islamabad, Pakistan',
-  status:     'Available for new projects',
+  tagline:    'Engineering precision. Delivering results.',
+  experience: '4+',
+  location:   'Islamabad, Pakistan',
+  status:     'Available',
   cgpa:       '3.42 / 4.00',
   university: 'UET Taxila',
   email:      'sajjadahmadwaseer@gmail.com',
@@ -26,13 +26,13 @@ export const identity = {
   linkedin:   'linkedin.com/in/sajjad-ahmad754',
   whatsappUrl:'https://wa.me/923435252754',
   linkedinUrl:'https://www.linkedin.com/in/sajjad-ahmad754',
-  heroDesc:   'WordPress & Laravel developer with 3+ years delivering high-performance plugins, custom themes, RESTful APIs, and LMS solutions. Based in Islamabad — building for the world.',
+  heroDesc:   'WordPress & Laravel developer with 4+ years delivering high-performance plugins, custom themes, RESTful APIs, and LMS solutions. Based in Islamabad — building for the world.',
 }
 
 /* ── STATS ─────────────────────────────────────────────────── */
 export const stats: Stat[] = [
-  { value: 3,    suffix: '+', label: '// YRS_EXPERIENCE', decimals: 0 },
-  { value: 5,    suffix: '+', label: '// COMPANIES',      decimals: 0 },
+  { value: 4,    suffix: '+', label: '// YRS_EXPERIENCE', decimals: 0 },
+  { value: 6,    suffix: '+', label: '// COMPANIES',      decimals: 0 },
   { value: 3.42, suffix: '',  label: '// UET_CGPA',       decimals: 2 },
 ]
 
@@ -50,15 +50,14 @@ export const navLinks: NavLink[] = [
 /* ── TERMINAL LINES ────────────────────────────────────────── */
 export const terminalLines: TerminalLine[] = [
   { type: 'blank',   content: '' },
-  { type: 'comment', content: '// WooCommerce Plugin — Sajjad Ahmad' },
-  { type: 'fn',      content: "add_action('woocommerce_thankyou'," },
-  { type: 'code',    content: "  'sajjad_render_guest_address');" },
+  { type: 'comment', content: '// ChronoMate Plugin — Sajjad Ahmad' },
+  { type: 'fn',      content: "add_action('wp_loaded'," },
+  { type: 'code',    content: "  'sajjad_init_chronomate');" },
   { type: 'blank',   content: '' },
-  { type: 'fn',      content: 'function sajjad_render_guest_address($id) {' },
-  { type: 'code',    content: '  $order = wc_get_order($id);' },
-  { type: 'code',    content: "  if (!$order->get_customer_id()) {" },
-  { type: 'code',    content: '    return render_address_card($order);' },
-  { type: 'code',    content: '  }' },
+  { type: 'fn',      content: 'function sajjad_init_chronomate() {' },
+  { type: 'code',    content: '  $scheduler = new ChronoMate();' },
+  { type: 'code',    content: "  $scheduler->register_hooks();" },
+  { type: 'code',    content: "  $scheduler->load_calendar();" },
   { type: 'code',    content: '}' },
   { type: 'blank',   content: '' },
   { type: 'comment', content: '// Laravel REST API' },
@@ -70,14 +69,28 @@ export const terminalLines: TerminalLine[] = [
 /* ── EXPERIENCE ────────────────────────────────────────────── */
 export const jobs: Job[] = [
   {
+    id: 'proto',
+    role: 'WordPress Developer',
+    company: 'Proto IT Consultant',
+    location: 'Islamabad, Pakistan',
+    period: 'Feb 2026 – Present',
+    current: true,
+    bullets: [
+      'Developed and launched ChronoMate — a custom WordPress plugin for scheduling, time-tracking, and appointment management with calendar integration and automated reminders',
+      'Applied WordPress security hardening including firewall setup, malware scanning, brute-force protection, SSL enforcement, and 2FA',
+      'Extended WooCommerce with custom product types, payment gateways, and subscription models for high-traffic stores',
+      'Integrated third-party REST APIs (CRMs, payment processors, automation tools) to streamline business workflows',
+      'Conducted security audits to identify and patch plugin vulnerabilities, SQL injection, XSS, and access control issues',
+    ],
+  },
+  {
     id: 'markloops',
     role: 'WordPress Developer',
     company: 'Markloops',
     location: 'Islamabad, Pakistan',
-    period: 'Aug 2025 – Present',
-    current: true,
+    period: 'Aug 2025 – Nov 2025',
+    current: false,
     bullets: [
-      'Developed and customized WordPress plugins and themes to meet diverse client requirements with clean, maintainable code',
       'Implemented LMS solutions using LearnDash and Tutor LMS — including course creation, student management, and payment integrations',
       'Performed website migrations across servers and hosting environments ensuring data integrity and minimal downtime',
       'Integrated and customized WooCommerce for eCommerce and subscription-based sites',
@@ -118,7 +131,7 @@ export const jobs: Job[] = [
     role: 'Junior WordPress Developer',
     company: 'Hammani Tech (Pvt.) Ltd',
     location: 'Islamabad, Pakistan',
-    period: 'Nov 2022 – Oct 2023',
+    period: 'Dec 2022 – Oct 2023',
     current: false,
     bullets: [
       'Developed and customized WordPress themes and plugins from scratch using HTML5, CSS3, JavaScript, and PHP',
@@ -132,7 +145,7 @@ export const jobs: Job[] = [
     role: 'Junior WordPress Plugin Developer',
     company: 'EBRIDGE Software House',
     location: 'Islamabad, Pakistan',
-    period: 'Apr 2022 – Sep 2022',
+    period: 'Apr 2022 – Oct 2022',
     current: false,
     bullets: [
       'Developed WooCommerce plugins: Guest address display on Thank You page, Sales countdown timer, Shop the Look Pro plugin',
@@ -157,6 +170,12 @@ export const skillCategories: SkillCategory[] = [
     pills: ['Laravel','Eloquent ORM','REST APIs','PHP','MySQL','Auth Systems','API Integration'],
   },
   {
+    id: 'security',
+    label: 'Security & DevOps',
+    icon: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z',
+    pills: ['Security Hardening','Firewall Setup','2FA','Malware Scanning','SSL','SQL Injection Prevention','XSS Protection'],
+  },
+  {
     id: 'frontend',
     label: 'Frontend Languages',
     icon: 'M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z',
@@ -167,12 +186,6 @@ export const skillCategories: SkillCategory[] = [
     label: 'Tools & DevOps',
     icon: 'M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.92c.04-.32.07-.64.07-.96 0-.32-.03-.66-.07-1l2.16-1.63c.19-.15.24-.42.12-.64l-2.05-3.55c-.13-.22-.38-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.48 0-.61.22L2.29 8.72c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1 0 .33.03.65.07.97l-2.16 1.66c-.19.15-.24.42-.12.64l2.05 3.55c.13.22.38.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.58 1.69-.98l2.49 1c.23.09.48 0 .61-.22l2.05-3.55c.13-.22.07-.49-.12-.64l-2.14-1.66z',
     pills: ['Git','GitHub','Postman','Newman','cPanel','VS Code','Linux CLI'],
-  },
-  {
-    id: 'optimization',
-    label: 'Optimization & Security',
-    icon: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z',
-    pills: ['Performance Opt.','Security Hardening','Site Migration','Caching','DB Optimization','Debugging'],
   },
   {
     id: 'professional',
@@ -186,7 +199,7 @@ export const skillCategories: SkillCategory[] = [
 export const education: EducationItem[] = [
   {
     id: 'uet',
-    badge: 'Bachelor\'s Degree',
+    badge: "Bachelor's Degree",
     badgeType: 'degree',
     degree: 'BS Computer Science (Honours)',
     school: 'University of Engineering & Technology (UET), Taxila',
@@ -231,7 +244,7 @@ export const awards: Award[] = [
     icon: '🥇',
     title: 'Certificate of Merit & Scholarship',
     year: 'DEC 2019',
-    description: 'Ranked among the Top 3 performers in the 1st Semester of the bachelor\'s program. Honored at the prestigious Scholarship Ceremony at Army Public College of Management & Sciences, Rawalpindi.',
+    description: "Ranked among the Top 3 performers in the 1st Semester of the bachelor's program. Honored at the prestigious Scholarship Ceremony at Army Public College of Management & Sciences, Rawalpindi.",
   },
   {
     id: 'peef',
@@ -276,7 +289,7 @@ export const contactLinks: ContactLink[] = [
     id: 'location',
     icon: 'map-pin',
     label: '// LOCATION',
-    value: 'PWD Islamabad, Pakistan',
+    value: 'Islamabad, Pakistan',
     href: null,
   },
 ]

@@ -7,42 +7,42 @@
 
    TYPOGRAPHY DIRECTION (matched from reference images):
    ─────────────────────────────────────────────────────
-   Display / Hero    → Playfair Display Bold Serif — crisp white
-   Italic Accent     → Playfair Display Bold Italic — gold #C8A84B
-   Section Headings  → Playfair Display Bold
-   Body Text         → Inter Light/Regular — soft gray
-   UI Labels / Tags  → Space Grotesk — uppercase, wide tracking
-   Code / Terminal   → IBM Plex Mono
+   Display / Hero    → Cormorant Garamond Bold Serif — ultra-refined luxury
+   Italic Accent     → Cormorant Garamond Bold Italic — gold #C8A84B
+   Section Headings  → Cormorant Garamond Bold
+   Body Text         → DM Sans Light/Regular — clean modern sans
+   UI Labels / Tags  → Outfit — sharp geometric, premium UI
+   Code / Terminal   → Geist Mono — Vercel's own monospace
 
    LAYOUT.TSX FONT SETUP:
    ─────────────────────────────────────────────────────
    import {
-     Playfair_Display,
-     Inter,
-     Space_Grotesk,
-     IBM_Plex_Mono,
+     Cormorant_Garamond,
+     DM_Sans,
+     Outfit,
+     Geist_Mono,
    } from 'next/font/google'
 
-   const playfairDisplay = Playfair_Display({
-     weight:  ['400','500','600','700','800','900'],
+   const cormorantGaramond = Cormorant_Garamond({
+     weight:  ['300','400','500','600','700'],
      style:   ['normal','italic'],
      subsets: ['latin'],
      variable: '--font-display',
      display: 'swap',
    })
-   const inter = Inter({
-     weight:  ['300','400','500'],
+   const dmSans = DM_Sans({
+     weight:  ['300','400','500','600'],
      subsets: ['latin'],
      variable: '--font-body',
      display: 'swap',
    })
-   const spaceGrotesk = Space_Grotesk({
+   const outfit = Outfit({
      weight:  ['300','400','500','600','700'],
      subsets: ['latin'],
      variable: '--font-accent',
      display: 'swap',
    })
-   const ibmPlexMono = IBM_Plex_Mono({
+   const geistMono = Geist_Mono({
      weight:  ['300','400','500'],
      subsets: ['latin'],
      variable: '--font-mono',
@@ -82,11 +82,27 @@
                 Dev-grade monospace for terminal/code.
   ─────────────────────────────────────────────────────────── */
 
-  --font-family-display: var(--font-display, 'Playfair Display', 'Georgia', serif);
-  --font-family-heading: var(--font-display, 'Playfair Display', 'Georgia', serif);
-  --font-family-sans:    var(--font-body,    'Inter', system-ui, -apple-system, sans-serif);
-  --font-family-accent:  var(--font-accent,  'Space Grotesk', 'Manrope', sans-serif);
-  --font-family-mono:    var(--font-mono,    'IBM Plex Mono', 'JetBrains Mono', monospace);
+  /* ── TOP 1% FONT STACK ─────────────────────────────────────
+     DISPLAY  → Cormorant Garamond — ultra-refined luxury serif
+                Used by top fashion houses & premium agencies.
+                Ultra-high contrast strokes, elegant italic.
+                Vercel, Awwwards winners use this pairing.
+
+     BODY     → DM Sans — the cleanest modern geometric sans
+                Used by Notion, Linear, Figma marketing sites.
+                Perfectly readable at all weights.
+
+     ACCENT   → Outfit — sharp geometric sans for UI chrome
+                Premium labels, nav, badges, buttons.
+
+     MONO     → Geist Mono — Vercel's own monospace
+                The most developer-premium mono available.
+  ─────────────────────────────────────────────────────────── */
+  --font-family-display: var(--font-display, 'Cormorant Garamond', 'Cormorant', 'Georgia', serif);
+  --font-family-heading: var(--font-display, 'Cormorant Garamond', 'Cormorant', 'Georgia', serif);
+  --font-family-sans:    var(--font-body,    'DM Sans', system-ui, -apple-system, sans-serif);
+  --font-family-accent:  var(--font-accent,  'Outfit', 'DM Sans', sans-serif);
+  --font-family-mono:    var(--font-mono,    'Geist Mono', 'JetBrains Mono', monospace);
 
   /* Backward-compat aliases — no component refactoring needed */
   --font-inter:  var(--font-family-sans);

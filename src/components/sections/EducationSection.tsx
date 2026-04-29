@@ -819,12 +819,18 @@ export default function EducationSection() {
             grid-template-columns: repeat(2, 1fr) !important;
           }
         }
-        @media (max-width: 560px) {
+        @media (max-width: 600px) {
           .edu-modules-grid {
             grid-template-columns: 1fr !important;
+            padding-bottom: 0 !important;
+            
           }
           .edu-featured-inner {
             grid-template-columns: 1fr !important;
+          }
+          /* Hide stagger offsets on mobile — cards stack cleanly */
+          .edu-modules-grid > div {
+            transform: none !important;
           }
         }
       `}</style>

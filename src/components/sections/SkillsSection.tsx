@@ -1,565 +1,559 @@
 'use client'
 
 import React, {
-  useRef,
-  useState,
-  useEffect,
-  useCallback,
-  memo,
+  useRef, useState, useEffect, useCallback, memo,
 } from 'react'
 import {
-  motion,
-  useInView,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  AnimatePresence,
+  motion, useInView, useMotionValue, useSpring,
+  useTransform, AnimatePresence,
 } from 'framer-motion'
 import { skillCategories } from '@/lib/data'
 
-/* ─────────────────────────────────────────────────────────────
-   CONSTANTS
-   ─────────────────────────────────────────────────────────── */
-const EASE_EXPO   = [0.16, 1, 0.3, 1]    as const
-const EASE_SPRING = [0.34, 1.56, 0.64, 1] as const
+const E  = [0.16, 1, 0.3, 1]    as const
+const ES = [0.34, 1.56, 0.64, 1] as const
 
-/* ─────────────────────────────────────────────────────────────
-   CATEGORY ACCENT SYSTEM
-   Primary categories get gold, secondary get green
-   ─────────────────────────────────────────────────────────── */
-const CAT_ACCENTS: Record<number, {
-  color: string; dim: string; bdr: string; glow: string; isGold: boolean
-}> = {
-  0: { color: 'var(--ac)',   dim: 'var(--ac-dim)',   bdr: 'var(--ac-bdr)',   glow: 'rgba(0,255,148,0.1)',   isGold: false },
-  1: { color: 'var(--gold)', dim: 'var(--gold-dim)', bdr: 'var(--gold-bdr)', glow: 'rgba(200,168,75,0.12)', isGold: true  },
-  2: { color: 'var(--ac)',   dim: 'var(--ac-dim)',   bdr: 'var(--ac-bdr)',   glow: 'rgba(0,255,148,0.1)',   isGold: false },
-  3: { color: 'var(--gold)', dim: 'var(--gold-dim)', bdr: 'var(--gold-bdr)', glow: 'rgba(200,168,75,0.12)', isGold: true  },
-  4: { color: 'var(--ac)',   dim: 'var(--ac-dim)',   bdr: 'var(--ac-bdr)',   glow: 'rgba(0,255,148,0.1)',   isGold: false },
-  5: { color: 'var(--gold)', dim: 'var(--gold-dim)', bdr: 'var(--gold-bdr)', glow: 'rgba(200,168,75,0.12)', isGold: true  },
+/* ─── PROFICIENCY ─── */
+const PROF: Record<string, number> = {
+  'Plugin Dev': 95, 'Theme Dev': 90, 'WooCommerce': 92, 'LearnDash': 84,
+  'Tutor LMS': 80, 'Elementor': 78, 'ACF': 82, 'Custom CPTs': 85, 'Shortcodes': 80,
+  'Laravel': 90, 'Eloquent ORM': 88, 'REST APIs': 92, 'PHP': 90, 'MySQL': 86,
+  'Auth Systems': 84, 'API Integration': 88,
+  'Security Hardening': 88, 'Firewall Setup': 82, '2FA': 80,
+  'SSL': 85, 'XSS Protection': 82, 'SQL Injection Prevention': 84,
+  'HTML5': 92, 'CSS3': 90, 'JavaScript': 86, 'jQuery': 84,
+  'Bootstrap': 80, 'Tailwind CSS': 85, 'AJAX': 82, 'JSON': 88,
+  'Git': 90, 'GitHub': 88, 'Postman': 85, 'cPanel': 84, 'Linux CLI': 82,
+  'Team Leadership': 85, 'Problem Solving': 92, 'Clean Code': 90,
+  'Documentation': 84, 'Agile Workflow': 80, 'API Testing': 86,
 }
+const getP = (s: string) => PROF[s] ?? 72
+
+const ACCENTS = [
+  { c: 'var(--ac)',   d: 'var(--ac-dim)',   b: 'var(--ac-bdr)',   g: 'rgba(0,255,148,0.08)',   gold: false },
+  { c: 'var(--gold)', d: 'var(--gold-dim)', b: 'var(--gold-bdr)', g: 'rgba(200,168,75,0.1)',   gold: true  },
+  { c: 'var(--ac)',   d: 'var(--ac-dim)',   b: 'var(--ac-bdr)',   g: 'rgba(0,255,148,0.08)',   gold: false },
+  { c: 'var(--gold)', d: 'var(--gold-dim)', b: 'var(--gold-bdr)', g: 'rgba(200,168,75,0.1)',   gold: true  },
+  { c: 'var(--ac)',   d: 'var(--ac-dim)',   b: 'var(--ac-bdr)',   g: 'rgba(0,255,148,0.08)',   gold: false },
+  { c: 'var(--gold)', d: 'var(--gold-dim)', b: 'var(--gold-bdr)', g: 'rgba(200,168,75,0.1)',   gold: true  },
+]
 
 /* ─────────────────────────────────────────────────────────────
-   PROFICIENCY LEVELS
-   Assign visual weight to each skill
+   INFINITE TICKER — scrolling skills tape
    ─────────────────────────────────────────────────────────── */
-const PROFICIENCY: Record<string, number> = {
-  // WordPress / PHP
-  'WordPress':     95, 'WooCommerce':    90, 'Custom Plugins':  88,
-  'PHP':           88, 'LearnDash':      82, 'ACF':             80,
-  'Elementor':     78,
-  // Laravel / Backend
-  'Laravel':       92, 'REST API':       90, 'MySQL':           85,
-  'Sanctum Auth':  82, 'Eloquent ORM':   85, 'Queues & Jobs':   75,
-  // Frontend
-  'React':         80, 'Next.js':        78, 'TypeScript':      75,
-  'Tailwind CSS':  82, 'JavaScript':     85, 'HTML/CSS':        92,
-  // DevOps / Tools
-  'Git':           90, 'Docker':         68, 'cPanel/WHM':      85,
-  'Linux':         72, 'CI/CD':          65, 'Cloudflare':      78,
-  // default fallback
-  '_':             70,
-}
-
-function getProficiency(skill: string): number {
-  return PROFICIENCY[skill] ?? PROFICIENCY['_']
-}
-
-/* ─────────────────────────────────────────────────────────────
-   SECTION CURSOR — global ambient orb
-   ─────────────────────────────────────────────────────────── */
-function SectionCursorLight({
-  sectionRef,
-}: {
-  sectionRef: React.RefObject<HTMLElement | null>
-}) {
-  const x  = useMotionValue(-600)
-  const y  = useMotionValue(-600)
-  const sx = useSpring(x, { stiffness: 50, damping: 16 })
-  const sy = useSpring(y, { stiffness: 50, damping: 16 })
-
-  useEffect(() => {
-    const fn = (e: MouseEvent) => {
-      const sec = sectionRef.current
-      if (!sec) return
-      const rect = sec.getBoundingClientRect()
-      if (e.clientY < rect.top || e.clientY > rect.bottom) return
-      x.set(e.clientX - rect.left)
-      y.set(e.clientY - rect.top)
-    }
-    window.addEventListener('mousemove', fn, { passive: true })
-    return () => window.removeEventListener('mousemove', fn)
-  }, [sectionRef, x, y])
+function SkillTicker() {
+  const allSkills = skillCategories.flatMap(c => c.pills)
+  const doubled   = [...allSkills, ...allSkills]
 
   return (
-    <motion.div
-      aria-hidden="true"
-      style={{
-        position:      'absolute',
-        left: 0, top: 0,
-        x: sx, y: sy,
-        translateX: '-50%', translateY: '-50%',
-        width:         700, height: 700,
-        borderRadius:  '50%',
-        background:    'radial-gradient(circle, rgba(0,255,148,0.03) 0%, rgba(200,168,75,0.015) 45%, transparent 68%)',
-        pointerEvents: 'none',
-        zIndex:        0,
-        filter:        'blur(16px)',
-      }}
-    />
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────
-   SKILL CHIP — magnetic floating chip
-   Each chip slightly follows cursor proximity
-   ─────────────────────────────────────────────────────────── */
-const SkillChip = memo(function SkillChip({
-  skill,
-  accent,
-  index,
-  active,
-}: {
-  skill:  string
-  accent: typeof CAT_ACCENTS[number]
-  index:  number
-  active: boolean
-}) {
-  const ref    = useRef<HTMLDivElement>(null)
-  const mx     = useMotionValue(0)
-  const my     = useMotionValue(0)
-  const smx    = useSpring(mx, { stiffness: 300, damping: 20 })
-  const smy    = useSpring(my, { stiffness: 300, damping: 20 })
-  const [hov, setHov] = useState(false)
-  const level  = getProficiency(skill)
-
-  const onMM = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current
-    if (!el) return
-    const r  = el.getBoundingClientRect()
-    const dx = (e.clientX - r.left - r.width  / 2) * 0.18
-    const dy = (e.clientY - r.top  - r.height / 2) * 0.18
-    mx.set(dx); my.set(dy)
-  }, [mx, my])
-
-  const onML = useCallback(() => {
-    mx.set(0); my.set(0); setHov(false)
-  }, [mx, my])
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={active ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.85 }}
-      transition={{ duration: 0.35, delay: active ? index * 0.04 : 0, ease: EASE_SPRING }}
-      onMouseMove={onMM}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={onML}
-      style={{ x: smx, y: smy, display: 'inline-flex' }}
-    >
-      <div style={{
-        display:       'flex',
-        alignItems:    'center',
-        gap:           5,
-        padding:       '0.28rem 0.7rem',
-        background:    hov ? accent.dim : 'var(--canvas-3)',
-        border:        `1px solid ${hov ? accent.bdr : 'var(--canvas-4)'}`,
-        borderRadius:  100,
-        cursor:        'default',
-        transition:    'all 0.2s var(--ease-expo)',
-        transform:     hov ? 'scale(1.06)' : 'scale(1)',
-        boxShadow:     hov ? `0 0 12px ${accent.glow}` : 'none',
-        whiteSpace:    'nowrap',
-      }}>
-        {/* Proficiency dot — size indicates level */}
-        <span style={{
-          width:        hov ? 7 : 5,
-          height:       hov ? 7 : 5,
-          borderRadius: '50%',
-          background:   hov ? accent.color : 'var(--t3)',
-          display:      'block',
-          flexShrink:   0,
-          transition:   'all 0.2s',
-          boxShadow:    hov ? `0 0 6px ${accent.glow}` : 'none',
-        }} />
-        <span style={{
-          fontFamily:    'var(--font-family-accent)',
-          fontSize:      '0.6rem',
-          fontWeight:    hov ? 600 : 400,
-          letterSpacing: '0.04em',
-          color:         hov ? accent.color : 'var(--t2)',
-          transition:    'color 0.2s',
-        }}>
-          {skill}
-        </span>
-      </div>
-    </motion.div>
-  )
-})
-
-/* ─────────────────────────────────────────────────────────────
-   TOP 3 PROFICIENCY BARS — shown in featured/tall modules
-   ─────────────────────────────────────────────────────────── */
-function ProficiencyBars({
-  skills,
-  accent,
-  active,
-}: {
-  skills: string[]
-  accent: typeof CAT_ACCENTS[number]
-  active: boolean
-}) {
-  const top3 = [...skills]
-    .sort((a, b) => getProficiency(b) - getProficiency(a))
-    .slice(0, 3)
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-      {top3.map((skill, i) => {
-        const level = getProficiency(skill)
-        return (
-          <div key={skill}>
-            <div style={{
-              display:        'flex',
-              justifyContent: 'space-between',
-              alignItems:     'baseline',
-              marginBottom:   '0.25rem',
+    <div style={{
+      overflow:   'hidden',
+      position:   'relative',
+      padding:    '0.75rem 0',
+      borderTop:  '1px solid var(--canvas-4)',
+      borderBottom: '1px solid var(--canvas-4)',
+      background: 'linear-gradient(to right, var(--canvas) 0%, transparent 8%, transparent 92%, var(--canvas) 100%)',
+      marginBottom: '3.5rem',
+      zIndex: 2,
+    }}>
+      <motion.div
+        animate={{ x: ['0%', '-50%'] }}
+        transition={{ duration: 28, ease: 'linear', repeat: Infinity }}
+        style={{ display: 'flex', gap: '0', whiteSpace: 'nowrap', width: 'max-content' }}
+      >
+        {doubled.map((skill, i) => (
+          <div key={i} style={{
+            display:    'inline-flex',
+            alignItems: 'center',
+            gap:        '0.5rem',
+            padding:    '0 1.5rem',
+          }}>
+            <span style={{
+              width: 3, height: 3, borderRadius: '50%',
+              background: i % 3 === 0 ? 'var(--gold)' : i % 3 === 1 ? 'var(--ac)' : 'var(--canvas-5)',
+              display: 'block', flexShrink: 0,
+            }} />
+            <span style={{
+              fontFamily:    'var(--font-family-accent)',
+              fontSize:      '0.62rem',
+              color:         i % 7 === 0 ? 'var(--gold)' : i % 5 === 0 ? 'var(--ac)' : 'var(--t3)',
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              fontWeight:    i % 7 === 0 || i % 5 === 0 ? 600 : 400,
             }}>
-              <span style={{
-                fontFamily:    'var(--font-family-accent)',
-                fontSize:      '0.58rem',
-                color:         'var(--t2)',
-                letterSpacing: '0.04em',
-              }}>
-                {skill}
-              </span>
-              <span style={{
-                fontFamily:    'var(--font-family-mono)',
-                fontSize:      '0.5rem',
-                color:         accent.color,
-                letterSpacing: '0.08em',
-                opacity:       active ? 1 : 0,
-                transition:    'opacity 0.4s 0.4s',
-              }}>
-                {level}%
-              </span>
-            </div>
-            {/* Track */}
-            <div style={{
-              height:       4,
-              background:   'var(--canvas-4)',
-              borderRadius: 2,
-              overflow:     'hidden',
-            }}>
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: active ? `${level}%` : 0 }}
-                transition={{ duration: 1.1, delay: 0.2 + i * 0.12, ease: EASE_EXPO }}
-                style={{
-                  height:        '100%',
-                  borderRadius:  2,
-                  background:    `linear-gradient(to right, ${accent.color}, ${accent.isGold ? 'var(--gold-rich)' : 'rgba(0,255,148,0.6)'})`,
-                  boxShadow:     active ? `0 0 8px ${accent.glow}` : 'none',
-                  transformOrigin: 'left',
-                }}
-              />
-            </div>
+              {skill}
+            </span>
           </div>
-        )
-      })}
+        ))}
+      </motion.div>
     </div>
   )
 }
 
 /* ─────────────────────────────────────────────────────────────
-   SKILL MODULE — the core card component
-   Large modules (0, 1) show proficiency bars + chips
-   Compact modules show chips only
+   RADIAL PROFICIENCY — circular gauge
    ─────────────────────────────────────────────────────────── */
-const SkillModule = memo(function SkillModule({
-  cat,
-  catIndex,
-  globalIndex,
-  isLarge,
-  inView,
-}: {
-  cat:         typeof skillCategories[number]
-  catIndex:    number
-  globalIndex: number
-  isLarge:     boolean
-  inView:      boolean
+function RadialGauge({ value, color, size = 52 }: {
+  value: number; color: string; size?: number
 }) {
-  const ref    = useRef<HTMLDivElement>(null)
+  const r   = (size - 6) / 2
+  const circ = 2 * Math.PI * r
+  const dash = (value / 100) * circ
+
+  return (
+    <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
+      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+        {/* Track */}
+        <circle cx={size/2} cy={size/2} r={r}
+          fill="none" stroke="var(--canvas-4)" strokeWidth={2.5} />
+        {/* Fill */}
+        <motion.circle
+          cx={size/2} cy={size/2} r={r}
+          fill="none" stroke={color === 'var(--gold)' ? '#C8A84B' : '#00FF94'}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          initial={{ strokeDashoffset: circ }}
+          animate={{ strokeDashoffset: circ - dash }}
+          transition={{ duration: 1.2, ease: E, delay: 0.3 }}
+          style={{ filter: `drop-shadow(0 0 4px ${color === 'var(--gold)' ? 'rgba(200,168,75,0.5)' : 'rgba(0,255,148,0.5)'})` }}
+        />
+      </svg>
+      {/* Value */}
+      <div style={{
+        position:   'absolute', inset: 0,
+        display:    'flex', alignItems: 'center', justifyContent: 'center',
+        fontFamily: 'var(--font-family-mono)',
+        fontSize:   '0.5rem', fontWeight: 500,
+        color:      color, letterSpacing: '0.02em',
+      }}>
+        {value}%
+      </div>
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FEATURED SPOTLIGHT CARD — large hero card for first category
+   ─────────────────────────────────────────────────────────── */
+function SpotlightCard({ cat, inView }: {
+  cat: typeof skillCategories[number]; inView: boolean
+}) {
+  const accent  = ACCENTS[0]
+  const top5    = [...cat.pills].sort((a, b) => getP(b) - getP(a)).slice(0, 5)
+  const [hov, setHov] = useState(false)
+  const [active, setActive] = useState(false)
+
+  useEffect(() => {
+    if (inView) setTimeout(() => setActive(true), 200)
+  }, [inView])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 28 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.75, ease: E }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      className="spotlight-card"
+      style={{
+        background:   hov
+          ? 'linear-gradient(145deg, var(--canvas-3) 0%, var(--canvas-2) 100%)'
+          : 'var(--canvas-2)',
+        border:       `1px solid ${hov ? accent.b : 'var(--canvas-4)'}`,
+        borderRadius: 'var(--r-xl)',
+        padding:      '2rem',
+        position:     'relative',
+        overflow:     'hidden',
+        transition:   'all 0.35s var(--ease-expo)',
+        boxShadow:    hov
+          ? `0 0 0 1px ${accent.b}, 0 32px 70px rgba(0,0,0,0.35), 0 0 60px ${accent.g}`
+          : 'var(--sh-sm)',
+        cursor:       'default',
+        gridColumn:   'span 1',
+        gridRow:      'span 2',
+      }}
+    >
+      {/* Full top gradient line */}
+      <div aria-hidden="true" style={{
+        position:   'absolute', top: 0, left: 0, right: 0, height: '2px',
+        background: `linear-gradient(to right, transparent, ${accent.c}, transparent)`,
+        opacity:    hov ? 1 : 0.3, transition: 'opacity 0.3s',
+      }} />
+
+      {/* Large watermark */}
+      <div aria-hidden="true" style={{
+        position:      'absolute', bottom: '-1rem', right: '-0.5rem',
+        fontFamily:    'var(--font-family-display)', fontStyle: 'italic',
+        fontWeight:    800, fontSize: '11rem', lineHeight: 1,
+        color:         accent.c, opacity: hov ? 0.04 : 0.015,
+        transition:    'opacity 0.4s', userSelect: 'none', pointerEvents: 'none',
+        letterSpacing: '-0.08em',
+      }}>
+        WP
+      </div>
+
+      {/* Corner glow */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: 0, right: 0, width: 160, height: 160,
+        background: `radial-gradient(circle at 100% 0%, ${accent.d}, transparent 65%)`,
+        opacity: hov ? 1 : 0.5, transition: 'opacity 0.3s', pointerEvents: 'none',
+      }} />
+
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem', position: 'relative', zIndex: 2 }}>
+        <div>
+          <div style={{
+            fontFamily: 'var(--font-family-accent)', fontSize: '0.54rem',
+            color: accent.c, letterSpacing: '0.18em', textTransform: 'uppercase',
+            fontWeight: 500, marginBottom: '0.4rem', opacity: 0.7,
+          }}>
+            Primary Expertise
+          </div>
+          <h3 style={{
+            fontFamily:    'var(--font-family-display)', fontWeight: 800,
+            fontSize:      'clamp(1.3rem, 2vw, 1.6rem)', letterSpacing: '-0.02em',
+            lineHeight:    1.05, color: 'var(--t1)', margin: 0,
+          }}>
+            {cat.label}
+          </h3>
+        </div>
+
+        {/* Icon pod */}
+        <div style={{
+          width: '3rem', height: '3rem', borderRadius: 'var(--r-md)',
+          background: accent.d, border: `1px solid ${accent.b}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: accent.c, flexShrink: 0,
+          boxShadow: hov ? `0 0 20px ${accent.g}` : 'none',
+          transition: 'box-shadow 0.3s',
+        }}>
+          <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d={cat.icon} />
+          </svg>
+        </div>
+      </div>
+
+      {/* Top 5 radial gauges */}
+      <div style={{ marginBottom: '1.5rem', position: 'relative', zIndex: 2 }}>
+        <div style={{
+          fontFamily: 'var(--font-family-accent)', fontSize: '0.52rem',
+          color: accent.c, letterSpacing: '0.16em', textTransform: 'uppercase',
+          fontWeight: 500, marginBottom: '1rem', opacity: 0.65,
+        }}>
+          Proficiency Radar
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+          {top5.map((skill, i) => {
+            const level = getP(skill)
+            return (
+              <div key={skill} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <RadialGauge value={level} color={accent.c} size={44} />
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'baseline', marginBottom: '0.2rem',
+                  }}>
+                    <span style={{
+                      fontFamily: 'var(--font-family-accent)', fontSize: '0.62rem',
+                      color: 'var(--t1)', fontWeight: 500, letterSpacing: '0.02em',
+                    }}>
+                      {skill}
+                    </span>
+                    <span style={{
+                      fontFamily: 'var(--font-family-mono)', fontSize: '0.5rem',
+                      color: 'var(--t3)', letterSpacing: '0.06em',
+                    }}>
+                      {level >= 90 ? 'Expert' : level >= 80 ? 'Advanced' : 'Proficient'}
+                    </span>
+                  </div>
+                  {/* Thin bar */}
+                  <div style={{ height: 2, background: 'var(--canvas-4)', borderRadius: 1, overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: active ? `${level}%` : 0 }}
+                      transition={{ duration: 1.1, delay: 0.25 + i * 0.1, ease: E }}
+                      style={{
+                        height: '100%', borderRadius: 1,
+                        background: `linear-gradient(to right, ${accent.c}, ${accent.gold ? 'var(--gold-rich)' : 'rgba(0,255,148,0.6)'})`,
+                        boxShadow: `0 0 4px ${accent.g}`,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div style={{
+        height: 1, background: hov
+          ? `linear-gradient(to right, ${accent.c}, var(--canvas-4), transparent)`
+          : 'var(--canvas-4)',
+        marginBottom: '1.2rem', position: 'relative', zIndex: 2,
+        transition: 'background 0.3s',
+      }} />
+
+      {/* All chips */}
+      <div style={{
+        display: 'flex', flexWrap: 'wrap', gap: '0.3rem',
+        position: 'relative', zIndex: 2,
+      }}>
+        {cat.pills.map((pill, pi) => (
+          <motion.span
+            key={pill}
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={active ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.3, delay: 0.4 + pi * 0.04, ease: ES }}
+            style={{
+              fontFamily:    'var(--font-family-accent)', fontSize: '0.57rem',
+              color:         'var(--t2)', background: 'var(--canvas-3)',
+              border:        '1px solid var(--canvas-4)',
+              padding:       '0.22rem 0.6rem', borderRadius: 100,
+              letterSpacing: '0.03em', fontWeight: 400,
+              transition:    'all 0.2s',
+              cursor:        'default',
+            }}
+            whileHover={{
+              background: accent.d,
+              borderColor: accent.b,
+              color: accent.c,
+              scale: 1.05,
+            }}
+          >
+            {pill}
+          </motion.span>
+        ))}
+      </div>
+
+      {/* Bottom bar */}
+      <motion.div
+        animate={{ scaleX: hov ? 1 : 0 }}
+        initial={{ scaleX: 0 }}
+        transition={{ duration: 0.4, ease: E }}
+        aria-hidden="true"
+        style={{
+          position: 'absolute', bottom: 0, left: '5%', right: '5%',
+          height: '2px',
+          background: `linear-gradient(to right, transparent, ${accent.c}, transparent)`,
+          transformOrigin: 'center', pointerEvents: 'none',
+        }}
+      />
+    </motion.div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COMPACT SKILL CARD — for remaining categories
+   ─────────────────────────────────────────────────────────── */
+const CompactCard = memo(function CompactCard({
+  cat, catIndex, index, inView,
+}: {
+  cat: typeof skillCategories[number]
+  catIndex: number; index: number; inView: boolean
+}) {
+  const accent  = ACCENTS[catIndex % ACCENTS.length]
+  const topSkill = [...cat.pills].sort((a, b) => getP(b) - getP(a))[0]
+  const [hov, setHov]     = useState(false)
+  const [active, setActive] = useState(false)
+
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const rotX   = useSpring(useTransform(mouseY, [-0.5, 0.5], [ isLarge ? 3 : 4.5, isLarge ? -3 : -4.5]), { stiffness: 160, damping: 22 })
-  const rotY   = useSpring(useTransform(mouseX, [-0.5, 0.5], [-isLarge ? 3 : 4.5,  isLarge ? 3 : 4.5 ]), { stiffness: 160, damping: 22 })
+  const rotX   = useSpring(useTransform(mouseY, [-0.5, 0.5], [3, -3]), { stiffness: 160, damping: 22 })
+  const rotY   = useSpring(useTransform(mouseX, [-0.5, 0.5], [-3, 3]), { stiffness: 160, damping: 22 })
+  const ref    = useRef<HTMLDivElement>(null)
 
-  const [hovered, setHovered] = useState(false)
-  const [shimmer, setShimmer] = useState(false)
-  const [chipIn,  setChipIn]  = useState(false)
-
-  const accent = CAT_ACCENTS[catIndex % 6] ?? CAT_ACCENTS[0]
-
-  const onMM = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const el = ref.current
-    if (!el) return
+  const onMM = useCallback((e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return
     const r  = el.getBoundingClientRect()
     mouseX.set((e.clientX - r.left) / r.width  - 0.5)
     mouseY.set((e.clientY - r.top)  / r.height - 0.5)
   }, [mouseX, mouseY])
+  const onML = useCallback(() => { mouseX.set(0); mouseY.set(0); setHov(false) }, [mouseX, mouseY])
 
-  const onME = useCallback(() => {
-    setHovered(true)
-    setShimmer(true)
-    setTimeout(() => setShimmer(false), 650)
-  }, [])
-
-  const onML = useCallback(() => {
-    mouseX.set(0); mouseY.set(0)
-    setHovered(false)
-  }, [mouseX, mouseY])
-
-  /* Activate chips as soon as section is in view */
   useEffect(() => {
-    if (inView) {
-      const t = setTimeout(() => setChipIn(true), 80 + globalIndex * 60)
-      return () => clearTimeout(t)
-    }
-  }, [inView, globalIndex])
-
-  /* Stagger vertical offsets for asymmetric rhythm */
-  const yOffsets = [0, 18, -10, 14, -8, 20]
-  const yOff     = isLarge ? 0 : yOffsets[globalIndex % yOffsets.length]
+    if (inView) setTimeout(() => setActive(true), 150 + index * 80)
+  }, [inView, index])
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 + Math.abs(yOff) }}
-      animate={inView ? { opacity: 1, y: yOff } : {}}
-      transition={{ duration: 0.65, delay: 0.06 + globalIndex * 0.08, ease: EASE_EXPO }}
-      style={{
-        transformStyle: 'preserve-3d',
-        perspective:    900,
-        gridRow:        isLarge ? 'span 1' : 'auto',
-        height:         '100%',
-      }}
+      initial={{ opacity: 0, y: 22 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.65, delay: 0.1 + index * 0.1, ease: E }}
+      style={{ transformStyle: 'preserve-3d', perspective: 800, height: '100%' }}
     >
       <motion.div
         ref={ref}
         onMouseMove={onMM}
-        onMouseEnter={onME}
+        onMouseEnter={() => setHov(true)}
         onMouseLeave={onML}
         style={{ rotateX: rotX, rotateY: rotY, height: '100%' }}
       >
         <div style={{
-          background:   hovered
-            ? 'linear-gradient(145deg, var(--canvas-3), var(--canvas-2))'
+          background:   hov
+            ? 'linear-gradient(148deg, var(--canvas-3), var(--canvas-2))'
             : 'var(--canvas-2)',
-          border:       `1px solid ${hovered ? accent.bdr : 'var(--canvas-4)'}`,
+          border:       `1px solid ${hov ? accent.b : 'var(--canvas-4)'}`,
           borderRadius: 'var(--r-xl)',
-          padding:      isLarge ? '1.85rem' : '1.5rem',
+          padding:      '1.5rem',
           height:       '100%',
-          display:      'flex',
-          flexDirection: 'column',
-          gap:          isLarge ? '1.3rem' : '1.1rem',
-          position:     'relative',
-          overflow:     'hidden',
-          transition:   'border-color 0.3s, background 0.3s, box-shadow 0.3s',
-          boxShadow:    hovered
-            ? `0 0 0 1px ${accent.bdr}, 0 20px 50px rgba(0,0,0,0.35), 0 0 60px ${accent.glow}`
+          display:      'flex', flexDirection: 'column', gap: '1.1rem',
+          position:     'relative', overflow: 'hidden',
+          transition:   'all 0.3s var(--ease-expo)',
+          boxShadow:    hov
+            ? `0 0 0 1px ${accent.b}, 0 20px 50px rgba(0,0,0,0.28), 0 0 40px ${accent.g}`
             : 'none',
           cursor:       'default',
         }}>
 
-          {/* Top accent line */}
+          {/* Top line */}
           <div aria-hidden="true" style={{
-            position:   'absolute',
-            top: 0, left: '6%', right: '6%',
-            height:     '1.5px',
-            background: `linear-gradient(to right, transparent, ${accent.color}, transparent)`,
-            opacity:    hovered ? 1 : 0.22,
-            transition: 'opacity 0.3s',
+            position:   'absolute', top: 0, left: 0, right: 0, height: '1.5px',
+            background: `linear-gradient(to right, transparent, ${accent.c}, transparent)`,
+            opacity:    hov ? 0.9 : 0.18, transition: 'opacity 0.3s',
           }} />
 
-          {/* Shimmer */}
-          <AnimatePresence>
-            {shimmer && (
-              <motion.div
-                key="ss"
-                initial={{ x: '-110%' }}
-                animate={{ x: '220%' }}
-                exit={{}}
-                transition={{ duration: 0.65, ease: 'linear' }}
-                aria-hidden="true"
-                style={{
-                  position:      'absolute', inset: 0,
-                  background:    `linear-gradient(90deg, transparent, ${accent.glow}, transparent)`,
-                  pointerEvents: 'none',
-                  zIndex:        1,
-                }}
-              />
-            )}
-          </AnimatePresence>
-
-          {/* Corner glow */}
+          {/* Watermark */}
           <div aria-hidden="true" style={{
-            position:      'absolute',
-            top: 0, right: 0,
-            width:         100, height: 100,
-            background:    `radial-gradient(circle at 100% 0%, ${accent.dim}, transparent 70%)`,
-            opacity:       hovered ? 1 : 0.4,
-            transition:    'opacity 0.3s',
-            pointerEvents: 'none',
-          }} />
-
-          {/* Large decorative background initial */}
-          <div aria-hidden="true" style={{
-            position:      'absolute',
-            bottom:        '-0.5rem',
-            right:         '-0.25rem',
-            fontFamily:    'var(--font-family-display)',
-            fontStyle:     'italic',
-            fontWeight:    800,
-            fontSize:      isLarge ? '8rem' : '6rem',
-            lineHeight:    1,
-            color:         accent.color,
-            opacity:       hovered ? 0.05 : 0.02,
-            transition:    'opacity 0.4s',
-            userSelect:    'none',
-            pointerEvents: 'none',
-            letterSpacing: '-0.05em',
+            position:      'absolute', bottom: '-0.5rem', right: '-0.2rem',
+            fontFamily:    'var(--font-family-display)', fontStyle: 'italic',
+            fontWeight:    800, fontSize: '5rem', lineHeight: 1,
+            color:         accent.c, opacity: hov ? 0.045 : 0.015,
+            transition:    'opacity 0.4s', userSelect: 'none', pointerEvents: 'none',
+            letterSpacing: '-0.06em',
           }}>
             {cat.label[0]}
           </div>
 
-          {/* ── Header ── */}
-          <div style={{
-            display:    'flex',
-            alignItems: 'center',
-            gap:        '0.7rem',
-            position:   'relative',
-            zIndex:     2,
-          }}>
-            {/* Icon pod */}
-            <motion.div
-              animate={{ scale: hovered ? 1.1 : 1 }}
-              transition={{ duration: 0.25, ease: EASE_SPRING }}
-              style={{
-                width:          isLarge ? '2.5rem' : '2.1rem',
-                height:         isLarge ? '2.5rem' : '2.1rem',
-                borderRadius:   'var(--r-sm)',
-                background:     hovered ? accent.dim : 'var(--canvas-3)',
-                border:         `1px solid ${hovered ? accent.bdr : 'var(--canvas-4)'}`,
-                display:        'flex',
-                alignItems:     'center',
-                justifyContent: 'center',
-                color:          hovered ? accent.color : 'var(--t3)',
-                flexShrink:     0,
-                transition:     'all 0.25s',
-                boxShadow:      hovered ? `0 0 16px ${accent.glow}` : 'none',
-              }}
-            >
-              <svg
-                width={isLarge ? 17 : 15}
-                height={isLarge ? 17 : 15}
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-              >
+          {/* Header row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', position: 'relative', zIndex: 2 }}>
+            <div style={{
+              width: '2rem', height: '2rem', borderRadius: 'var(--r-sm)',
+              background: hov ? accent.d : 'var(--canvas-3)',
+              border: `1px solid ${hov ? accent.b : 'var(--canvas-4)'}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: hov ? accent.c : 'var(--t3)', flexShrink: 0,
+              transition: 'all 0.24s',
+              boxShadow: hov ? `0 0 12px ${accent.g}` : 'none',
+            }}>
+              <svg width={13} height={13} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d={cat.icon} />
               </svg>
-            </motion.div>
-
-            {/* Title */}
-            <h3 style={{
-              fontFamily:    'var(--font-family-display)',
-              fontWeight:    700,
-              fontSize:      isLarge ? 'clamp(1rem,1.5vw,1.2rem)' : 'clamp(0.9rem,1.1vw,1rem)',
-              letterSpacing: '-0.01em',
-              color:         hovered ? 'var(--t1)' : 'var(--t2)',
-              transition:    'color 0.22s',
-            }}>
-              {cat.label}
-            </h3>
-
-            {/* Skill count badge */}
-            <div style={{
-              marginLeft:    'auto',
-              fontFamily:    'var(--font-family-mono)',
-              fontSize:      '0.52rem',
-              color:         hovered ? accent.color : 'var(--t3)',
-              background:    hovered ? accent.dim : 'transparent',
-              border:        `1px solid ${hovered ? accent.bdr : 'transparent'}`,
-              padding:       '2px 7px',
-              borderRadius:  100,
-              transition:    'all 0.22s',
-              letterSpacing: '0.06em',
-              whiteSpace:    'nowrap',
-            }}>
-              {cat.pills.length} skills
             </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h3 style={{
+                fontFamily: 'var(--font-family-display)', fontWeight: 700,
+                fontSize: 'clamp(0.88rem, 1.05vw, 1rem)', letterSpacing: '-0.012em',
+                lineHeight: 1.1, color: 'var(--t1)', margin: 0,
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
+                {cat.label}
+              </h3>
+              <div style={{
+                fontFamily: 'var(--font-family-mono)', fontSize: '0.48rem',
+                color: hov ? accent.c : 'var(--t3)', letterSpacing: '0.1em',
+                marginTop: '0.1rem', transition: 'color 0.2s',
+              }}>
+                {cat.pills.length} skills
+              </div>
+            </div>
+
+            {/* Top skill radial */}
+            {active && (
+              <RadialGauge value={getP(topSkill)} color={accent.c} size={38} />
+            )}
           </div>
 
-          {/* ── Gradient divider ── */}
+          {/* Divider */}
           <div style={{
-            height:     '1px',
-            background: hovered
-              ? `linear-gradient(to right, ${accent.color}, var(--canvas-4), transparent)`
-              : 'linear-gradient(to right, var(--canvas-4), transparent)',
-            transition: 'background 0.3s',
-            position:   'relative',
-            zIndex:     2,
+            height: 1,
+            background: hov
+              ? `linear-gradient(to right, ${accent.c}, var(--canvas-4), transparent)`
+              : 'var(--canvas-4)',
+            transition: 'background 0.3s', position: 'relative', zIndex: 2,
           }} />
 
-          {/* ── Proficiency bars (large modules only) ── */}
-          {isLarge && (
-            <div style={{ position: 'relative', zIndex: 2 }}>
-              <div style={{
-                fontFamily:    'var(--font-family-accent)',
-                fontSize:      '0.54rem',
-                color:         accent.color,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                marginBottom:  '0.75rem',
-                opacity:       0.7,
-              }}>
-                Top Proficiency
-              </div>
-              <ProficiencyBars skills={cat.pills} accent={accent} active={chipIn} />
-            </div>
-          )}
+          {/* Top 2 mini bars */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', position: 'relative', zIndex: 2 }}>
+            {[...cat.pills].sort((a, b) => getP(b) - getP(a)).slice(0, 2).map((skill, i) => {
+              const level = getP(skill)
+              return (
+                <div key={skill}>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'baseline', marginBottom: '0.18rem',
+                  }}>
+                    <span style={{
+                      fontFamily: 'var(--font-family-accent)', fontSize: '0.56rem',
+                      color: 'var(--t2)', letterSpacing: '0.03em',
+                    }}>
+                      {skill}
+                    </span>
+                    <span style={{
+                      fontFamily: 'var(--font-family-mono)', fontSize: '0.48rem',
+                      color: accent.c, letterSpacing: '0.08em',
+                    }}>
+                      {level}%
+                    </span>
+                  </div>
+                  <div style={{ height: 2, background: 'var(--canvas-4)', borderRadius: 1, overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: active ? `${level}%` : 0 }}
+                      transition={{ duration: 1, delay: 0.2 + i * 0.1, ease: E }}
+                      style={{
+                        height: '100%', borderRadius: 1,
+                        background: `linear-gradient(to right, ${accent.c}, ${accent.gold ? 'var(--gold-rich)' : 'rgba(0,255,148,0.5)'})`,
+                        boxShadow: `0 0 4px ${accent.g}`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
 
-          {/* ── Skill chips — all modules ── */}
+          {/* Pills */}
           <div style={{
-            display:   'flex',
-            flexWrap:  'wrap',
-            gap:       '0.35rem',
-            position:  'relative',
-            zIndex:    2,
+            display: 'flex', flexWrap: 'wrap', gap: '0.28rem',
+            position: 'relative', zIndex: 2,
           }}>
             {cat.pills.map((pill, pi) => (
-              <SkillChip
+              <motion.span
                 key={pill}
-                skill={pill}
-                accent={accent}
-                index={pi}
-                active={chipIn}
-              />
+                initial={{ opacity: 0, scale: 0.85 }}
+                animate={active ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.28, delay: 0.3 + pi * 0.035, ease: ES }}
+                style={{
+                  fontFamily:    'var(--font-family-accent)', fontSize: '0.55rem',
+                  color:         'var(--t2)', background: 'var(--canvas-3)',
+                  border:        '1px solid var(--canvas-4)',
+                  padding:       '0.2rem 0.55rem', borderRadius: 100,
+                  letterSpacing: '0.03em', cursor: 'default',
+                  transition:    'all 0.18s',
+                }}
+                whileHover={{
+                  background: accent.d, borderColor: accent.b, color: accent.c, scale: 1.06,
+                }}
+              >
+                {pill}
+              </motion.span>
             ))}
           </div>
 
           {/* Bottom bar */}
           <motion.div
-            animate={{ scaleX: hovered ? 1 : 0 }}
-            initial={{ scaleX: 0 }}
-            transition={{ duration: 0.4, ease: EASE_EXPO }}
+            animate={{ scaleX: hov ? 1 : 0 }} initial={{ scaleX: 0 }}
+            transition={{ duration: 0.35, ease: E }}
             aria-hidden="true"
             style={{
-              position:        'absolute',
-              bottom: 0, left: '6%', right: '6%',
-              height:          '1.5px',
-              background:      `linear-gradient(to right, transparent, ${accent.color}, transparent)`,
-              transformOrigin: 'center',
-              pointerEvents:   'none',
+              position: 'absolute', bottom: 0, left: '5%', right: '5%',
+              height: '1.5px',
+              background: `linear-gradient(to right, transparent, ${accent.c}, transparent)`,
+              transformOrigin: 'center', pointerEvents: 'none',
             }}
           />
         </div>
@@ -569,142 +563,125 @@ const SkillModule = memo(function SkillModule({
 })
 
 /* ─────────────────────────────────────────────────────────────
-   MASTHEAD STATS — total skills + categories
+   HEADER STATS
    ─────────────────────────────────────────────────────────── */
-function MastheadStats({ inView }: { inView: boolean }) {
-  const totalSkills = skillCategories.reduce((acc, c) => acc + c.pills.length, 0)
+function HeaderStats({ inView }: { inView: boolean }) {
+  const total = skillCategories.reduce((a, c) => a + c.pills.length, 0)
+  const items = [
+    { val: `${total}`, lbl: 'Total Skills', gold: true  },
+    { val: `${skillCategories.length}`, lbl: 'Domains', gold: false },
+    { val: '4+',       lbl: 'Yrs Mastering', gold: true  },
+  ]
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: 0.35, ease: EASE_EXPO }}
-      style={{
-        display:   'flex',
-        alignItems: 'center',
-        gap:        '1.5rem',
-        flexWrap:  'wrap',
-      }}
+      transition={{ duration: 0.55, delay: 0.3, ease: E }}
+      style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}
     >
-      {[
-        { val: totalSkills.toString(),           label: 'Total Skills'    },
-        { val: skillCategories.length.toString(), label: 'Domains'        },
-        { val: '3+',                              label: 'Years Mastering' },
-      ].map(({ val, label }, i) => (
-        <div key={label} style={{
-          display:    'flex',
-          alignItems: 'baseline',
-          gap:        '0.4rem',
-        }}>
-          <span style={{
-            fontFamily:    'var(--font-family-display)',
-            fontStyle:     i % 2 === 0 ? 'italic' : 'normal',
-            fontWeight:    700,
-            fontSize:      'clamp(1.3rem, 2vw, 1.7rem)',
-            color:         i % 2 === 0 ? 'var(--gold)' : 'var(--t1)',
-            letterSpacing: '-0.02em',
-            lineHeight:    1,
-          }}>
-            {val}
-          </span>
-          <span style={{
-            fontFamily:    'var(--font-family-mono)',
-            fontSize:      '0.56rem',
-            color:         'var(--t3)',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-          }}>
-            {label}
-          </span>
-          {i < 2 && (
-            <span style={{ color: 'var(--canvas-4)', marginLeft: '1rem', fontSize: '0.7rem' }}>·</span>
+      {items.map(({ val, lbl, gold }, i) => (
+        <React.Fragment key={lbl}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+            <span style={{
+              fontFamily:    'var(--font-family-display)',
+              fontStyle:     gold ? 'italic' : 'normal',
+              fontWeight:    800,
+              fontSize:      'clamp(1.4rem, 2.2vw, 1.85rem)',
+              color:         gold ? 'var(--gold)' : 'var(--t1)',
+              letterSpacing: '-0.025em', lineHeight: 1,
+              textShadow:    gold ? '0 0 22px rgba(200,168,75,0.2)' : 'none',
+            }}>
+              {val}
+            </span>
+            <span style={{
+              fontFamily:    'var(--font-family-accent)', fontSize: '0.5rem',
+              color:         'var(--t3)', letterSpacing: '0.12em',
+              textTransform: 'uppercase', fontWeight: 500,
+            }}>
+              {lbl}
+            </span>
+          </div>
+          {i < items.length - 1 && (
+            <div style={{
+              width: 1, height: 30,
+              background: 'linear-gradient(to bottom, transparent, var(--canvas-4), transparent)',
+              margin: '0 0.3rem',
+            }} />
           )}
-        </div>
+        </React.Fragment>
       ))}
     </motion.div>
   )
 }
 
 /* ─────────────────────────────────────────────────────────────
-   MAIN SECTION
+   SECTION
    ─────────────────────────────────────────────────────────── */
 export default function SkillsSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const headerRef  = useRef<HTMLDivElement>(null)
   const gridRef    = useRef<HTMLDivElement>(null)
-  const inView     = useInView(gridRef,  { once: true, margin: '-20px' })
+  const inView     = useInView(gridRef,   { once: true, margin: '-10px' })
   const hInView    = useInView(headerRef, { once: true })
+
+  const [featured, ...rest] = skillCategories
 
   return (
     <section
       id="skills"
       ref={sectionRef}
       className="section-pad"
-      style={{
-        background: 'var(--canvas)',
-        position:   'relative',
-        overflow:   'hidden',
-      }}
+      style={{ background: 'var(--canvas)', position: 'relative', overflow: 'hidden' }}
     >
-      <SectionCursorLight sectionRef={sectionRef} />
-
-      {/* Ambient layers */}
+      {/* Ambient atmosphere */}
       <div aria-hidden="true" style={{
-        position:      'absolute', inset: 0,
-        background:    'radial-gradient(ellipse 50% 40% at 5% 50%, rgba(200,168,75,0.018) 0%, transparent 65%)',
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse 55% 45% at 0% 55%, rgba(200,168,75,0.018) 0%, transparent 65%)',
         pointerEvents: 'none',
       }} />
       <div aria-hidden="true" style={{
-        position:      'absolute', inset: 0,
-        background:    'radial-gradient(ellipse 45% 40% at 95% 50%, rgba(0,255,148,0.015) 0%, transparent 65%)',
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse 50% 40% at 100% 50%, rgba(0,255,148,0.014) 0%, transparent 65%)',
         pointerEvents: 'none',
       }} />
       <div aria-hidden="true" style={{
-        position:   'absolute',
-        top: 0, left: '50%',
-        transform:  'translateX(-50%)',
-        width:      200, height: 1,
+        position:   'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
+        width:      180, height: 1,
         background: 'linear-gradient(to right, transparent, var(--gold-bdr), transparent)',
       }} />
 
       <div className="container-custom" style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* ── Header ── */}
+        {/* ── HEADER ── */}
         <div
           ref={headerRef}
           style={{
-            display:        'flex',
-            alignItems:     'flex-end',
-            justifyContent: 'space-between',
-            flexWrap:       'wrap',
-            gap:            '1.5rem',
-            marginBottom:   '3.5rem',
+            display: 'flex', alignItems: 'flex-end',
+            justifyContent: 'space-between', flexWrap: 'wrap',
+            gap: '1.5rem', marginBottom: '2rem',
           }}
         >
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={hInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.55, ease: EASE_EXPO }}
-              style={{ marginBottom: '0.7rem' }}
+              transition={{ duration: 0.5, ease: E }}
+              style={{ marginBottom: '0.65rem' }}
             >
               <span className="section-label">// Skill Intelligence</span>
             </motion.div>
 
             <div style={{ overflow: 'hidden' }}>
               <motion.div
-                initial={{ y: '100%', opacity: 0 }}
+                initial={{ y: '105%', opacity: 0 }}
                 animate={hInView ? { y: 0, opacity: 1 } : {}}
-                transition={{ duration: 0.7, delay: 0.08, ease: EASE_EXPO }}
+                transition={{ duration: 0.75, delay: 0.08, ease: E }}
               >
                 <span style={{
-                  fontFamily:    'var(--font-family-display)',
-                  fontWeight:    800,
-                  fontSize:      'clamp(2rem, 3.5vw, 3rem)',
-                  letterSpacing: '-0.025em',
-                  lineHeight:    0.95,
-                  color:         'var(--t1)',
-                  display:       'block',
+                  fontFamily: 'var(--font-family-display)', fontWeight: 800,
+                  fontSize: 'clamp(2.2rem, 4vw, 3.4rem)', letterSpacing: '-0.028em',
+                  lineHeight: 0.9, color: 'var(--t1)', display: 'block',
                 }}>
                   The full
                 </span>
@@ -712,19 +689,15 @@ export default function SkillsSection() {
             </div>
             <div style={{ overflow: 'hidden' }}>
               <motion.div
-                initial={{ y: '100%', opacity: 0 }}
+                initial={{ y: '105%', opacity: 0 }}
                 animate={hInView ? { y: 0, opacity: 1 } : {}}
-                transition={{ duration: 0.7, delay: 0.15, ease: EASE_EXPO }}
+                transition={{ duration: 0.75, delay: 0.16, ease: E }}
               >
                 <span style={{
-                  fontFamily:    'var(--font-family-display)',
-                  fontStyle:     'italic',
-                  fontWeight:    800,
-                  fontSize:      'clamp(2rem, 3.5vw, 3rem)',
-                  letterSpacing: '-0.025em',
-                  lineHeight:    0.95,
-                  color:         'var(--gold)',
-                  display:       'block',
+                  fontFamily: 'var(--font-family-display)', fontStyle: 'italic', fontWeight: 800,
+                  fontSize: 'clamp(2.2rem, 4vw, 3.4rem)', letterSpacing: '-0.028em',
+                  lineHeight: 0.9, color: 'var(--gold)', display: 'block',
+                  textShadow: '0 0 40px rgba(200,168,75,0.18)',
                 }}>
                   stack.
                 </span>
@@ -732,48 +705,59 @@ export default function SkillsSection() {
             </div>
           </div>
 
-          <MastheadStats inView={hInView} />
+          <HeaderStats inView={hInView} />
         </div>
 
-        {/* ── Skill modules grid ── */}
-        <div
-          ref={gridRef}
-          className="skills-module-grid"
-          style={{
-            display:             'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap:                 '1.2rem',
-            alignItems:          'start',
-            paddingBottom:       '2rem', /* room for offset cards */
-          }}
-        >
-          {skillCategories.map((cat, i) => (
-            <SkillModule
+        {/* ── TICKER ── */}
+        <SkillTicker />
+
+        {/* ── BENTO GRID ── */}
+        <div ref={gridRef} className="skills-bento" style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          gridTemplateRows:    'auto',
+          gap:                 '1rem',
+          alignItems:          'start',
+        }}>
+          {/* Spotlight card — tall, left column */}
+          <div style={{ gridColumn: '1', gridRow: '1 / 3' }}>
+            <SpotlightCard cat={featured} inView={inView} />
+          </div>
+
+          {/* Remaining compact cards */}
+          {rest.map((cat, i) => (
+            <CompactCard
               key={cat.id}
               cat={cat}
-              catIndex={i}
-              globalIndex={i}
-              isLarge={i === 0 || i === 1} /* First two get proficiency bars */
+              catIndex={i + 1}
+              index={i}
               inView={inView}
             />
           ))}
         </div>
-
       </div>
 
       <style>{`
         @keyframes pulse-dot {
           0%,100% { opacity:1; transform:scale(1); }
-          50%      { opacity:0.5; transform:scale(0.78); }
+          50%      { opacity:0.5; transform:scale(0.75); }
         }
         @media (max-width: 1024px) {
-          .skills-module-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
+          .skills-bento {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .spotlight-card {
+            grid-column: 1 / -1 !important;
+            grid-row: auto !important;
           }
         }
         @media (max-width: 600px) {
-          .skills-module-grid {
+          .skills-bento {
             grid-template-columns: 1fr !important;
+          }
+          .spotlight-card {
+            grid-column: 1 !important;
+            grid-row: auto !important;
           }
         }
       `}</style>
