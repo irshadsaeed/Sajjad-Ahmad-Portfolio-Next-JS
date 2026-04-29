@@ -86,8 +86,8 @@ const ChannelCard = memo(function ChannelCard({
         style={{
           display:        'flex',
           alignItems:     'center',
-          gap:            '1rem',
-          padding:        '1rem 1.25rem',
+          gap:            '0.75rem',
+          padding:        '0.9rem 1rem',
           borderRadius:   'var(--r-lg)',
           background:     hov ? ch.dim : 'var(--canvas-2)',
           border:         `1px solid ${hov ? ch.bdr : 'var(--canvas-4)'}`,
@@ -169,11 +169,11 @@ const ChannelCard = memo(function ChannelCard({
         {/* Right meta */}
         <div style={{
           display:       'flex', flexDirection: 'column',
-          alignItems:    'flex-end', gap: '0.2rem', flexShrink: 0,
-          minWidth:      0,
+          alignItems:    'flex-end', gap: '0.2rem',
+          flexShrink:    1, minWidth: 0,
         }}>
-          {/* Note pill */}
-          <span style={{
+          {/* Note pill — hidden on mobile via CSS */}
+          <span className="ch-note-pill" style={{
             fontFamily:    'var(--font-family-mono)',
             fontSize:      '0.5rem',
             color:         hov ? ch.color : 'var(--t3)',
@@ -184,6 +184,7 @@ const ChannelCard = memo(function ChannelCard({
             padding:       '2px 8px',
             whiteSpace:    'nowrap',
             transition:    'all 0.25s',
+            flexShrink:    0,
           }}>
             {ch.note}
           </span>
@@ -193,7 +194,7 @@ const ChannelCard = memo(function ChannelCard({
             <motion.span
               animate={{ opacity: hov ? 1 : 0.3, x: hov ? 0 : 3, y: hov ? 0 : 3 }}
               transition={{ duration: 0.18 }}
-              style={{ color: hov ? ch.color : 'var(--t3)', display: 'flex' }}
+              style={{ color: hov ? ch.color : 'var(--t3)', display: 'flex', flexShrink: 0 }}
             >
               <ArrowUpRight size={13} aria-hidden="true" />
             </motion.span>
@@ -267,9 +268,10 @@ function StatusCard({ inView }: { inView: boolean }) {
       <div style={{
         display:        'flex', alignItems: 'center',
         justifyContent: 'space-between',
-        padding:        '0.75rem 1.15rem',
+        padding:        '0.7rem 1.1rem',
         borderBottom:   '1px solid var(--canvas-4)',
         background:     'linear-gradient(to bottom, var(--canvas-3), transparent)',
+        overflow:       'hidden',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           {/* Traffic lights */}
@@ -290,18 +292,20 @@ function StatusCard({ inView }: { inView: boolean }) {
         </div>
 
         {/* Live clock */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
           <span style={{
             width: 4, height: 4, borderRadius: '50%',
             background: 'var(--ac)', boxShadow: '0 0 5px var(--ac)',
-            display: 'block', animation: 'pulse-dot 2s ease-in-out infinite',
+            display: 'block', flexShrink: 0,
+            animation: 'pulse-dot 2s ease-in-out infinite',
           }} />
           <span style={{
             fontFamily:    'var(--font-family-mono)',
-            fontSize:      '0.58rem', color: 'var(--gold)',
-            letterSpacing: '0.06em', fontWeight: 500,
+            fontSize:      '0.56rem', color: 'var(--gold)',
+            letterSpacing: '0.04em', fontWeight: 500,
+            whiteSpace:    'nowrap',
           }}>
-            {time} PKT
+            {time}
           </span>
         </div>
       </div>
@@ -316,8 +320,9 @@ function StatusCard({ inView }: { inView: boolean }) {
           style={{
             display:        'flex', alignItems: 'center',
             justifyContent: 'space-between',
-            padding:        '0.6rem 1.15rem',
+            padding:        '0.55rem 1.1rem',
             borderBottom:   i < rows.length - 1 ? '1px solid var(--canvas-4)' : 'none',
+            overflow:       'hidden',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -341,6 +346,7 @@ function StatusCard({ inView }: { inView: boolean }) {
             fontWeight:    500, fontSize: '0.72rem',
             color:         gold ? 'var(--gold)' : 'var(--ac)',
             letterSpacing: gold ? '-0.005em' : '0.02em',
+            whiteSpace:    'nowrap', flexShrink: 0,
           }}>
             {val}
           </span>
@@ -501,7 +507,7 @@ export default function ContactSection() {
       id="contact"
       ref={sectionRef}
       className="section-pad"
-      style={{ background: 'var(--canvas-2)', position: 'relative', overflow: 'hidden', maxWidth: '100vw' }}
+      style={{ background: 'var(--canvas-2)', position: 'relative', overflow: 'hidden' }}
     >
       {/* Ambient */}
       <div aria-hidden="true" style={{
@@ -648,7 +654,10 @@ export default function ContactSection() {
             gap: 2.5rem !important;
           }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 540px) {
+          .ch-note-pill {
+            display: none !important;
+          }
           .contact-grid {
             gap: 2rem !important;
           }

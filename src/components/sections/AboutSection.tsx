@@ -131,7 +131,7 @@ const FeatureCard = memo(function FeatureCard({
         onMouseEnter={() => setHov(true)}
         style={{ rotateX: rotX, rotateY: rotY, transformStyle: 'preserve-3d' }}
       >
-        <div style={{
+        <div className="feature-card-inner" style={{
           position:     'relative',
           background:   hov
             ? 'linear-gradient(140deg, var(--canvas-3), var(--canvas-2))'
@@ -321,6 +321,7 @@ function DataPanel({ inView }: { inView: boolean }) {
             transition={{ duration: 0.45, delay: 0.42 + i * 0.08, ease: E }}
             onMouseEnter={() => setHovRow(i)}
             onMouseLeave={() => setHovRow(null)}
+            className="data-panel-row"
             style={{
               display:      'flex',
               alignItems:   'flex-start',
@@ -357,7 +358,7 @@ function DataPanel({ inView }: { inView: boolean }) {
             </span>
 
             {/* Key */}
-            <span style={{
+            <span className="data-panel-key" style={{
               fontFamily:    'var(--font-family-mono)',
               fontSize:      '0.56rem',
               color:         hovRow === i ? 'var(--ac)' : 'rgba(0,255,148,0.55)',
@@ -378,7 +379,7 @@ function DataPanel({ inView }: { inView: boolean }) {
             }}>:</span>
 
             {/* Value */}
-            <span style={{
+            <span className="data-panel-val" style={{
               fontFamily:    gold ? 'var(--font-family-display)' : 'var(--font-family-mono)',
               fontStyle:     gold ? 'italic' : 'normal',
               fontWeight:    gold ? 700 : 400,
@@ -510,7 +511,7 @@ function StatsPod({ inView }: { inView: boolean }) {
               onMouseEnter={() => setHov(i)}
               onMouseLeave={() => setHov(null)}
               style={{
-                padding:      '1.1rem 1.2rem',
+                padding:      '1.1rem 0.65rem',
                 borderRight:  i < items.length - 1 ? '1px solid var(--canvas-4)' : 'none',
                 display:      'flex', flexDirection: 'column', gap: 3,
                 background:   hov === i
@@ -569,7 +570,7 @@ function StatsPod({ inView }: { inView: boolean }) {
                 fontFamily:    'var(--font-family-mono)',
                 fontSize:      '0.48rem',
                 color:         gold ? 'rgba(200,168,75,0.45)' : 'var(--t3)',
-                letterSpacing: '0.12em',
+                letterSpacing: '0.06em',
                 textTransform: 'uppercase',
               }}>
                 {sub}
@@ -579,7 +580,7 @@ function StatsPod({ inView }: { inView: boolean }) {
         </div>
 
         {/* Bottom bar — status + tagline */}
-        <div style={{
+        <div className="stats-pod-bottom" style={{
           padding:        '0.7rem 1rem',
           display:        'flex',
           alignItems:     'center',
@@ -686,7 +687,7 @@ export default function AboutSection() {
               transition={{ duration: 0.7, delay: 0.06, ease: E }}
               style={{ marginBottom: '1.85rem' }}
             >
-              <div style={{
+              <div className="about-heading-line" style={{
                 fontFamily:    'var(--font-family-display)',
                 fontWeight:    800,
                 fontSize:      'clamp(2.2rem, 4vw, 3.4rem)',
@@ -696,7 +697,7 @@ export default function AboutSection() {
               }}>
                 Turning ideas
               </div>
-              <div style={{
+              <div className="about-heading-line" style={{
                 fontFamily:    'var(--font-family-display)',
                 fontStyle:     'italic',
                 fontWeight:    800,
@@ -801,6 +802,83 @@ export default function AboutSection() {
         @media (max-width: 420px) {
           .about-grid {
             gap: 2rem !important;
+          }
+        }
+
+        /* ── 320px and below ── */
+        @media (max-width: 320px) {
+
+          /* Tighten outer spacing */
+          .about-grid {
+            gap: 1.5rem !important;
+          }
+          .section-pad {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+          .container-custom {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+          }
+
+          /* Scale heading down — clamp floor won't go lower on 320px */
+          .about-heading-line {
+            font-size: 1.7rem !important;
+            letter-spacing: -0.02em !important;
+            line-height: 1 !important;
+          }
+
+          /* Feature cards — single column, tighter padding */
+          .about-grid > div:last-child {
+            grid-template-columns: 1fr !important;
+            gap: 0.6rem !important;
+          }
+          .feature-card-inner {
+            padding: 0.9rem !important;
+          }
+
+          /* Stats pod — 2-col stays but tighter cells */
+          .stats-pod-row {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+          .stats-pod-row > div {
+            padding: 0.7rem 0.6rem !important;
+          }
+          .stats-pod-row > div:nth-child(2) {
+            border-right: none !important;
+          }
+          .stats-pod-row > div:nth-child(1),
+          .stats-pod-row > div:nth-child(2) {
+            border-bottom: 1px solid var(--canvas-4) !important;
+          }
+
+          /* Stats value font scale */
+          
+
+          /* Stats pod bottom bar — stack vertically */
+          .stats-pod-bottom {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.4rem !important;
+            padding: 0.6rem 0.75rem !important;
+          }
+
+          /* Data panel rows — tighter, prevent overflow */
+          .data-panel-row {
+            padding: 0.5rem 0.6rem !important;
+            gap: 0.3rem !important;
+          }
+          .data-panel-key {
+            min-width: 40px !important;
+            font-size: 0.44rem !important;
+            letter-spacing: 0.08em !important;
+          }
+          .data-panel-val {
+            font-size: 0.6rem !important;
+          }
+          /* Gold values (italic display font) at smaller size */
+          .data-panel-val[data-gold="true"] {
+            font-size: 0.78rem !important;
           }
         }
       `}</style>
