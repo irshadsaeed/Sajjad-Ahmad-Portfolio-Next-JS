@@ -172,7 +172,7 @@ const ChannelCard = memo(function ChannelCard({
           alignItems:    'flex-end', gap: '0.2rem',
           flexShrink:    1, minWidth: 0,
         }}>
-          {/* Note pill — hidden on mobile via CSS */}
+          {/* Note pill — hidden on mobile via globals.css */}
           <span className="ch-note-pill" style={{
             fontFamily:    'var(--font-family-mono)',
             fontSize:      '0.5rem',
@@ -642,27 +642,6 @@ export default function ContactSection() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse-dot {
-          0%,100% { opacity:1; transform:scale(1); }
-          50%      { opacity:0.5; transform:scale(0.78); }
-        }
-        @media (max-width: 860px) {
-          .contact-grid {
-            grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
-          }
-        }
-        @media (max-width: 540px) {
-          .ch-note-pill {
-            display: none !important;
-          }
-          .contact-grid {
-            gap: 2rem !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }
