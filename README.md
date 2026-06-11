@@ -1,90 +1,89 @@
+# 🚀 Sajjad Ahmad Portfolio
+
 <div align="center">
-
-<img src="public/images/image.png" alt="Sajjad Ahmad" width="120" style="border-radius: 50%;" />
-
-# Sajjad Ahmad — Portfolio
 
 ### WordPress & Laravel Developer
 
-[![Live Site](https://img.shields.io/badge/Live-sajjadahmad.vercel.app-C8A84B?style=for-the-badge&logo=vercel&logoColor=white)](https://sajjadahmad.vercel.app)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-sajjad--ahmad754-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sajjad-ahmad754)
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-%2B92%20343%20525%202754-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/923435252754)
-[![Email](https://img.shields.io/badge/Email-sajjadahmadwaseer@gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:sajjadahmadwaseer@gmail.com)
+A premium portfolio website built with **Next.js**, **TypeScript**, and **Framer Motion**, designed to showcase professional experience, projects, achievements, education, and technical expertise.
+
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge\&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge\&logo=typescript\&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge\&logo=vercel)
 
 </div>
 
 ---
 
-## Overview
+## 📖 Overview
 
-Personal portfolio of **Sajjad Ahmad** — a WordPress & Laravel developer with **3+ years** of professional experience building high-performance plugins, custom themes, RESTful APIs, and LMS solutions. Based in Islamabad, Pakistan — delivering for clients globally.
+This portfolio was developed for **Sajjad Ahmad**, a professional WordPress & Laravel Developer with over **3 years of experience** building custom websites, plugins, APIs, LMS solutions, and business applications.
 
-This portfolio is built to **elite production standards** — competing with top-tier global developer portfolios in design, performance, and engineering quality.
-
----
-
-## Tech Stack
-
-| Category | Technology |
-|---|---|
-| **Framework** | Next.js 14 (App Router) |
-| **Language** | TypeScript |
-| **Styling** | CSS Custom Properties (Design Tokens) |
-| **Animations** | Framer Motion |
-| **Fonts** | Playfair Display · Inter · Space Grotesk · IBM Plex Mono |
-| **Icons** | Lucide React |
-| **Deployment** | Vercel |
+The project focuses on delivering a premium user experience through modern animations, clean architecture, performance optimization, and responsive design.
 
 ---
 
-## Design System
+## ✨ Features
 
-The entire UI is built on a single **CSS token system** in `globals.css`:
+### 🎨 User Experience
 
-- **Color** — Dark canvas `#080808` + Electric Green `--ac: #00FF94` + Luxury Gold `--gold: #C8A84B`
-- **Typography** — Editorial serif (Playfair Display) paired with clean sans (Inter) and mono (IBM Plex Mono)
-- **Spacing** — Fluid `clamp()` scale across all breakpoints
-- **Themes** — Full dark + light mode with zero FOUC via inline theme init script
+* Modern Premium UI Design
+* Smooth Framer Motion Animations
+* Custom Interactive Cursor
+* Scroll Progress Indicator
+* Active Section Navigation
+* Smooth Scrolling Experience
+* Fully Responsive Layout
+* Dark & Light Theme Support
 
----
+### ⚡ Performance
 
-## Sections
+* Lazy Loaded Sections
+* Optimized Asset Loading
+* Code Splitting
+* Fast Initial Page Load
+* SEO Optimized Structure
+* Production Ready Deployment
 
-| Section | Concept |
-|---|---|
-| **Hero** | Portrait left / editorial content right · Letter-warp proximity animation · Financial dashboard stats |
-| **Navbar** | Floating Command Bar — centered glass pill with SA emblem · Proximity glow links · Fullscreen mobile menu |
-| **About** | Terminal-style data panel · 3D tilt feature cards · Inline serif highlights |
-| **Experience** | Horizontal snap carousel · Achievement capsules · Keyboard navigation |
-| **Skills** | Skill Intelligence System · Proficiency bars · Magnetic floating chips |
-| **Education** | SVG radial CGPA gauge with animated count-up · Knowledge module cards |
-| **Awards** | Spotlight click-to-expand system · Cursor light · Animated edge fill |
-| **Contact** | Vertical Signal Lines · Morphing CTA ("Start a Conversation" → "Let's Talk") · Cursor atmosphere orb |
-| **Footer** | Cinematic editorial CTA · Gold shimmer separator |
+### ♿ Accessibility
 
----
-
-## Features
-
-- ⚡ **Performance** — Lazy-loaded sections via `React.lazy + Suspense`, GPU-only transforms, `next/font` with `display: swap`
-- 🎨 **Animations** — Spring-based Framer Motion, magnetic elements, 3D tilt, shimmer sweeps, scroll-driven progress
-- 🌗 **Theme System** — FOUC-free dark/light mode using `data-theme` attribute + `localStorage` persistence
-- 📱 **Responsive** — Mobile-first, fluid grids, cinematic fullscreen mobile menu
-- ♿ **Accessibility** — Skip link, ARIA labels, `aria-current`, semantic HTML, keyboard navigation
-- 🔍 **SEO** — JSON-LD `Person` + `WebSite` schema, full OpenGraph + Twitter cards, canonical URL, sitemap-ready
-- 🔒 **Security** — No client secrets, no exposed keys, CSP-ready structure
+* Semantic HTML
+* Keyboard Navigation
+* Screen Reader Friendly
+* ARIA Labels
+* Accessible Navigation
 
 ---
 
-## Project Structure
+## 🛠 Tech Stack
 
-```
+| Category        | Technology            |
+| --------------- | --------------------- |
+| Framework       | Next.js 14            |
+| Language        | TypeScript            |
+| UI Library      | React                 |
+| Animation       | Framer Motion         |
+| Styling         | CSS Custom Properties |
+| Icons           | Lucide React          |
+| Deployment      | Vercel                |
+| Version Control | Git & GitHub          |
+
+---
+
+## 📂 Project Structure
+
+```bash
 src/
 ├── app/
-│   ├── globals.css          # Full design token system
-│   ├── layout.tsx           # Fonts, metadata, JSON-LD, FOUC script
-│   └── page.tsx             # Root page — lazy section loading
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+│
 ├── components/
+│   ├── layout/
+│   │   ├── Navbar.tsx
+│   │   └── Footer.tsx
+│   │
 │   ├── sections/
 │   │   ├── HeroSection.tsx
 │   │   ├── AboutSection.tsx
@@ -92,98 +91,156 @@ src/
 │   │   ├── SkillsSection.tsx
 │   │   ├── EducationSection.tsx
 │   │   ├── AwardsSection.tsx
-│   │   ├── ContactSection.tsx
-│   │   └── Footer.tsx
-│   └── ui/
-│       ├── Navbar.tsx
-│       ├── ThemeToggle.tsx
-│       └── RevealWrapper.tsx
+│   │   └── ContactSection.tsx
+│
 ├── hooks/
-│   ├── useTheme.ts          # SSR-safe dark/light toggle
-│   ├── useScrollSpy.ts      # Active section detection
-│   └── useCountUp.ts        # Animated number counter
+│   ├── useCustomCursor.ts
+│   └── customHooks.ts
+│
 ├── lib/
-│   └── data.ts              # All content — jobs, skills, education, awards
-├── types/
-│   └── index.ts             # TypeScript interfaces
-public/
-├── images/
-│   └── image.png            # Profile photo
-├── og-image.png             # OpenGraph 1200×630
-└── favicon.ico              # SA branded favicon
+├── public/
+└── types/
 ```
 
 ---
 
-## Getting Started
+## 🎯 Portfolio Sections
+
+### Home
+
+Professional introduction and hero showcase.
+
+### About
+
+Developer profile, background, and career summary.
+
+### Experience
+
+Professional work history and achievements.
+
+### Skills
+
+Technical skills and technologies.
+
+### Education
+
+Academic background and certifications.
+
+### Awards
+
+Professional awards and accomplishments.
+
+### Contact
+
+Communication and collaboration opportunities.
+
+---
+
+## 🚀 Getting Started
+
+### Navigate to Project
 
 ```bash
-# Clone
-git clone https://github.com/yourusername/sajjad-portfolio.git
 cd sajjad-portfolio
+```
 
-# Install
+### Install Dependencies
+
+```bash
 npm install
+```
 
-# Dev server
+### Run Development Server
+
+```bash
 npm run dev
+```
 
-# Build
+Open:
+
+```bash
+http://localhost:3000
+```
+
+---
+
+## 📦 Production Build
+
+```bash
 npm run build
+```
 
-# Start production
+Start production server:
+
+```bash
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
-
 ---
 
-## Deployment
+## ☁️ Deployment
 
-Deployed on **Vercel** with automatic deployments on every `main` branch push.
+This project is optimized for deployment on **Vercel**.
 
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
+npm install -g vercel
 vercel --prod
 ```
 
-Or connect your GitHub repo directly at [vercel.com](https://vercel.com) for zero-config deployment.
+Or connect your GitHub repository directly to Vercel for automatic deployments.
 
 ---
 
-## Performance Targets
+## 📈 Performance Goals
 
-| Metric | Target |
-|---|---|
-| Performance | 95+ |
-| Accessibility | 95+ |
-| Best Practices | 100 |
-| SEO | 100 |
-| LCP | < 2.5s |
-| CLS | < 0.1 |
+| Metric            | Target |
+| ----------------- | ------ |
+| Performance       | 95+    |
+| Accessibility     | 95+    |
+| Best Practices    | 100    |
+| SEO               | 100    |
+| Mobile Responsive | 100%   |
 
 ---
 
-## Author
+## 🔒 Best Practices
 
-**Sajjad Ahmad**
-WordPress & Laravel Developer · Islamabad, Pakistan
+* Component Based Architecture
+* Type Safety with TypeScript
+* Lazy Loading Strategy
+* Optimized Rendering
+* Accessibility Standards
+* Responsive Design Principles
+* SEO Friendly Implementation
 
-- 🌐 [sajjadahmad.vercel.app](https://sajjadahmad.vercel.app)
-- 💼 [LinkedIn](https://www.linkedin.com/in/sajjad-ahmad754)
-- 📱 [WhatsApp](https://wa.me/923435252754)
-- 📧 [sajjadahmadwaseer@gmail.com](mailto:sajjadahmadwaseer@gmail.com)
+---
+
+## 👨‍💻 Author
+
+### Sajjad Ahmad
+
+**WordPress & Laravel Developer**
+
+📍 Islamabad, Pakistan
+
+📧 [sajjadahmadwaseer@gmail.com](mailto:sajjadahmadwaseer@gmail.com)
+
+📱 WhatsApp Available
+
+💼 LinkedIn Profile
+
+🌐 Portfolio Website
 
 ---
 
 <div align="center">
 
-Designed & built by **Sajjad Ahmad** · © 2025
+### Built with ❤️ using Next.js, TypeScript & Framer Motion
 
-*Engineering precision. Delivering results.*
+**© 2026 Sajjad Ahmad. All Rights Reserved.**
+
+*"Building scalable digital experiences with modern technologies."*
+
+⭐ Don't forget to star this repository.
 
 </div>
