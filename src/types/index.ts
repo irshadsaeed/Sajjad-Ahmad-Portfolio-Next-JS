@@ -29,6 +29,7 @@ export interface EducationItem {
   cgpa?: string
   description: string
   featured?: boolean
+link?: string;
 }
 
 export interface Award {
