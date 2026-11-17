@@ -55,7 +55,7 @@ export default function About() {
               <span>Years of professional experience</span>
             </div>
             <div className="stat">
-              <strong><Count to={6} /></strong>
+              <strong><Count to={5} /></strong>
               <span>Companies trusted my code</span>
             </div>
             <div className="stat">
