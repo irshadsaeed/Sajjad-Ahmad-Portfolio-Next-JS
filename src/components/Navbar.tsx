@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 import { identity, navLinks } from '@/lib/data'
+import ThemeToggle from './ThemeToggle'
 
 const links = navLinks.filter(l => l.href !== '#hero')
 
@@ -66,6 +67,7 @@ export default function Navbar() {
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+            <ThemeToggle />
             <a href="#contact" className="btn btn-primary nav-cta">
               Hire me <ArrowUpRight size={16} />
             </a>

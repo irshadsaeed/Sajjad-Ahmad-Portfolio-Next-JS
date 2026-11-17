@@ -12,6 +12,14 @@ function spotlight(e: MouseEvent<HTMLDivElement>) {
   const r = el.getBoundingClientRect()
   el.style.setProperty('--mx', `${e.clientX - r.left}px`)
   el.style.setProperty('--my', `${e.clientY - r.top}px`)
+  if (!window.matchMedia('(hover: hover)').matches) return
+  const rx = ((e.clientY - r.top) / r.height - 0.5) * -6
+  const ry = ((e.clientX - r.left) / r.width - 0.5) * 6
+  el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`
+}
+
+function reset(e: MouseEvent<HTMLDivElement>) {
+  e.currentTarget.style.transform = ''
 }
 
 export default function Skills() {
@@ -33,7 +41,7 @@ export default function Skills() {
 
         <div className="bento">
           {skillCategories.map((c, i) => (
-            <Reveal key={c.id} delay={(i % 3) * 0.08} className="card" onMouseMove={spotlight}>
+            <Reveal key={c.id} delay={(i % 3) * 0.08} className="card" onMouseMove={spotlight} onMouseLeave={reset}>
               <div className="card-top">
                 <span className="card-icon">
                   {(() => { const I = icons[i % icons.length]; return <I size={21} strokeWidth={1.6} /> })()}
