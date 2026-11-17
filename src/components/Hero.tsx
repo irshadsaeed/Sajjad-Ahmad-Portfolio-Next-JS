@@ -75,7 +75,7 @@ export default function Hero() {
 
           <motion.div {...fade(0.9)} className="hero-meta">
             <div><strong>4+</strong><span>Years building</span></div>
-            <div><strong>6</strong><span>Companies</span></div>
+            <div><strong>5</strong><span>Companies</span></div>
             <div><strong>UET</strong><span>CS Graduate</span></div>
           </motion.div>
         </div>

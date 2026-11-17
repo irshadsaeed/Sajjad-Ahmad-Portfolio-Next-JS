@@ -33,7 +33,7 @@ export default function About() {
           <Reveal className="about-copy">
             <p>
               I'm Sajjad, a developer based in Islamabad with over four years of hands-on experience
-              across six companies. My day-to-day is the WordPress ecosystem — custom plugins,
+              across five companies. My day-to-day is the WordPress ecosystem — custom plugins,
               bespoke themes, WooCommerce extensions and LMS builds with LearnDash and Tutor LMS.
             </p>
             <p>
